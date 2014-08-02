@@ -11,4 +11,6 @@ class EEProm{
 		uint8_t read(uint16_t address);
 		char* readall();
 };
+
+
 #endif
