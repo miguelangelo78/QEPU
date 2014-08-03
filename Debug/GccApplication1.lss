@@ -17,15 +17,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   6 .debug_abbrev 00000ea7  00000000  00000000  00007352  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000b9d  00000000  00000000  000081f9  2**0
+  7 .debug_line   00000b9b  00000000  00000000  000081f9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  0000094c  00000000  00000000  00008d98  2**2
+  8 .debug_frame  0000094c  00000000  00000000  00008d94  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000860  00000000  00000000  000096e4  2**0
+  9 .debug_str    00000860  00000000  00000000  000096e0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000029d2  00000000  00000000  00009f44  2**0
+ 10 .debug_loc    000029d2  00000000  00000000  00009f40  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000001e8  00000000  00000000  0000c916  2**0
+ 11 .debug_ranges 000001e8  00000000  00000000  0000c912  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -840,11 +840,10 @@ char* EEProm::readall(){
 #include "gates.h"
 #include "uart.h"
 #include "qepu.h"
-Gates::Gates(){
+Gates::Gates(){}
      4cc:	08 95       	ret
 
 000004ce <_ZN5Gates8ampl2vecEii>:
-}
 
 Serial s;
 QEPU::Utils u;
@@ -871,7 +870,7 @@ Complex * Gates::ampl2vec(int theta,int phi){
      4f0:	90 e0       	ldi	r25, 0x00	; 0
      4f2:	0e 94 74 0e 	call	0x1ce8	; 0x1ce8 <malloc>
      4f6:	7c 01       	movw	r14, r24
-	vec[0].re=cos(theta*M_PI/360); // ALPHA RE (IM=0)
+	vec[0].re=cos(theta*M_PI/360);						 // ALPHA RE (IM=0)
      4f8:	b8 01       	movw	r22, r16
      4fa:	88 27       	eor	r24, r24
      4fc:	77 fd       	sbrc	r23, 7
@@ -1008,7 +1007,7 @@ Complex * Gates::ampl2vec(int theta,int phi){
      620:	8d eb       	ldi	r24, 0xBD	; 189
      622:	90 e0       	ldi	r25, 0x00	; 0
      624:	0e 94 49 0b 	call	0x1692	; 0x1692 <_ZN6Serial10writestrlnEPc>
-	vec[0].re=cos(theta*M_PI/360); // ALPHA RE (IM=0)
+	vec[0].re=cos(theta*M_PI/360);						 // ALPHA RE (IM=0)
 	vec[1].re=sin((theta*M_PI)/360)*cos((phi*M_PI)/180); // BETA RE
 	vec[1].im=sin((theta*M_PI)/360)*sin((phi*M_PI)/180); // BETA IM
 	
@@ -1984,10 +1983,10 @@ int * Gates::T(int theta,int phi){
      d6c:	08 95       	ret
 
 00000d6e <_GLOBAL__sub_I__ZN5GatesC2Ev>:
+#include "gates.h"
+#include "uart.h"
 #include "qepu.h"
-Gates::Gates(){
-	
-}
+Gates::Gates(){}
 
 Serial s;
      d6e:	8d eb       	ldi	r24, 0xBD	; 189
@@ -2666,16 +2665,16 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		//QUANTUM FUNCTIONS:
 		//1 QUBIT GATES -
 		case 0x10: // X GATE
-			newthephi=gates.X(read(op2,THE),read(op2,PHI));
+			newthephi=gates.X(read(op1,THE),read(op1,PHI));
     1176:	41 e0       	ldi	r20, 0x01	; 1
     1178:	50 e0       	ldi	r21, 0x00	; 0
-    117a:	b2 01       	movw	r22, r4
+    117a:	b4 01       	movw	r22, r8
     117c:	ce 01       	movw	r24, r28
     117e:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     1182:	8c 01       	movw	r16, r24
     1184:	40 e0       	ldi	r20, 0x00	; 0
     1186:	50 e0       	ldi	r21, 0x00	; 0
-    1188:	b2 01       	movw	r22, r4
+    1188:	b4 01       	movw	r22, r8
     118a:	ce 01       	movw	r24, r28
     118c:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     1190:	a8 01       	movw	r20, r16
@@ -2704,16 +2703,16 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		break;
     11c2:	c2 c0       	rjmp	.+388    	; 0x1348 <_ZN4QEPU7executeEill+0x28a>
 		case 0x11: // Y GATE
-			newthephi=gates.Y(read(op2,THE),read(op2,PHI));
+			newthephi=gates.Y(read(op1,THE),read(op1,PHI));
     11c4:	41 e0       	ldi	r20, 0x01	; 1
     11c6:	50 e0       	ldi	r21, 0x00	; 0
-    11c8:	b2 01       	movw	r22, r4
+    11c8:	b4 01       	movw	r22, r8
     11ca:	ce 01       	movw	r24, r28
     11cc:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     11d0:	8c 01       	movw	r16, r24
     11d2:	40 e0       	ldi	r20, 0x00	; 0
     11d4:	50 e0       	ldi	r21, 0x00	; 0
-    11d6:	b2 01       	movw	r22, r4
+    11d6:	b4 01       	movw	r22, r8
     11d8:	ce 01       	movw	r24, r28
     11da:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     11de:	a8 01       	movw	r20, r16
@@ -2742,16 +2741,16 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		break;
     1210:	9b c0       	rjmp	.+310    	; 0x1348 <_ZN4QEPU7executeEill+0x28a>
 		case 0x12: // Z GATE
-			newthephi=gates.Z(read(op2,THE),read(op2,PHI));
+			newthephi=gates.Z(read(op1,THE),read(op1,PHI));
     1212:	41 e0       	ldi	r20, 0x01	; 1
     1214:	50 e0       	ldi	r21, 0x00	; 0
-    1216:	b2 01       	movw	r22, r4
+    1216:	b4 01       	movw	r22, r8
     1218:	ce 01       	movw	r24, r28
     121a:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     121e:	8c 01       	movw	r16, r24
     1220:	40 e0       	ldi	r20, 0x00	; 0
     1222:	50 e0       	ldi	r21, 0x00	; 0
-    1224:	b2 01       	movw	r22, r4
+    1224:	b4 01       	movw	r22, r8
     1226:	ce 01       	movw	r24, r28
     1228:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     122c:	a8 01       	movw	r20, r16
@@ -2780,16 +2779,16 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		break;
     125e:	74 c0       	rjmp	.+232    	; 0x1348 <_ZN4QEPU7executeEill+0x28a>
 		case 0x13: // H GATE
-			newthephi=gates.H(read(op2,THE),read(op2,PHI));
+			newthephi=gates.H(read(op1,THE),read(op1,PHI));
     1260:	41 e0       	ldi	r20, 0x01	; 1
     1262:	50 e0       	ldi	r21, 0x00	; 0
-    1264:	b2 01       	movw	r22, r4
+    1264:	b4 01       	movw	r22, r8
     1266:	ce 01       	movw	r24, r28
     1268:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     126c:	8c 01       	movw	r16, r24
     126e:	40 e0       	ldi	r20, 0x00	; 0
     1270:	50 e0       	ldi	r21, 0x00	; 0
-    1272:	b2 01       	movw	r22, r4
+    1272:	b4 01       	movw	r22, r8
     1274:	ce 01       	movw	r24, r28
     1276:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     127a:	a8 01       	movw	r20, r16
@@ -2818,16 +2817,16 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		break;
     12ac:	4d c0       	rjmp	.+154    	; 0x1348 <_ZN4QEPU7executeEill+0x28a>
 		case 0x14: // S GATE
-			newthephi=gates.S(read(op2,THE),read(op2,PHI));
+			newthephi=gates.S(read(op1,THE),read(op1,PHI));
     12ae:	41 e0       	ldi	r20, 0x01	; 1
     12b0:	50 e0       	ldi	r21, 0x00	; 0
-    12b2:	b2 01       	movw	r22, r4
+    12b2:	b4 01       	movw	r22, r8
     12b4:	ce 01       	movw	r24, r28
     12b6:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     12ba:	8c 01       	movw	r16, r24
     12bc:	40 e0       	ldi	r20, 0x00	; 0
     12be:	50 e0       	ldi	r21, 0x00	; 0
-    12c0:	b2 01       	movw	r22, r4
+    12c0:	b4 01       	movw	r22, r8
     12c2:	ce 01       	movw	r24, r28
     12c4:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     12c8:	a8 01       	movw	r20, r16
@@ -2856,16 +2855,16 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		break;
     12fa:	26 c0       	rjmp	.+76     	; 0x1348 <_ZN4QEPU7executeEill+0x28a>
 		case 0x15: // T GATE
-			newthephi=gates.T(read(op2,THE),read(op2,PHI));
+			newthephi=gates.T(read(op1,THE),read(op1,PHI));
     12fc:	41 e0       	ldi	r20, 0x01	; 1
     12fe:	50 e0       	ldi	r21, 0x00	; 0
-    1300:	b2 01       	movw	r22, r4
+    1300:	b4 01       	movw	r22, r8
     1302:	ce 01       	movw	r24, r28
     1304:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     1308:	8c 01       	movw	r16, r24
     130a:	40 e0       	ldi	r20, 0x00	; 0
     130c:	50 e0       	ldi	r21, 0x00	; 0
-    130e:	b2 01       	movw	r22, r4
+    130e:	b4 01       	movw	r22, r8
     1310:	ce 01       	movw	r24, r28
     1312:	0e 94 14 07 	call	0xe28	; 0xe28 <_ZN4QEPU4readEii>
     1316:	a8 01       	movw	r20, r16

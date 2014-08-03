@@ -173,27 +173,27 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		//QUANTUM FUNCTIONS:
 		//1 QUBIT GATES -
 		case 0x10: // X GATE
-			newthephi=gates.X(read(op2,THE),read(op2,PHI));
+			newthephi=gates.X(read(op1,THE),read(op1,PHI));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x11: // Y GATE
-			newthephi=gates.Y(read(op2,THE),read(op2,PHI));
+			newthephi=gates.Y(read(op1,THE),read(op1,PHI));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x12: // Z GATE
-			newthephi=gates.Z(read(op2,THE),read(op2,PHI));
+			newthephi=gates.Z(read(op1,THE),read(op1,PHI));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x13: // H GATE
-			newthephi=gates.H(read(op2,THE),read(op2,PHI));
+			newthephi=gates.H(read(op1,THE),read(op1,PHI));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x14: // S GATE
-			newthephi=gates.S(read(op2,THE),read(op2,PHI));
+			newthephi=gates.S(read(op1,THE),read(op1,PHI));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x15: // T GATE
-			newthephi=gates.T(read(op2,THE),read(op2,PHI));
+			newthephi=gates.T(read(op1,THE),read(op1,PHI));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		//2 QUBIT GATES -

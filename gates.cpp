@@ -1,16 +1,14 @@
 #include "gates.h"
 #include "uart.h"
 #include "qepu.h"
-Gates::Gates(){
-	
-}
+Gates::Gates(){}
 
 Serial s;
 QEPU::Utils u;
 
 Complex * Gates::ampl2vec(int theta,int phi){
 	Complex* vec=(Complex*)malloc(sizeof(Complex)*2);
-	vec[0].re=cos(theta*M_PI/360); // ALPHA RE (IM=0)
+	vec[0].re=cos(theta*M_PI/360);						 // ALPHA RE (IM=0)
 	vec[1].re=sin((theta*M_PI)/360)*cos((phi*M_PI)/180); // BETA RE
 	vec[1].im=sin((theta*M_PI)/360)*sin((phi*M_PI)/180); // BETA IM
 	

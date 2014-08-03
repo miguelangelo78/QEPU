@@ -1150,14 +1150,14 @@ END GROUP
  .debug_abbrev  0x00000904      0x3fd qepu.o
  .debug_abbrev  0x00000d01      0x1a6 uart.o
 
-.debug_line     0x00000000      0xb9d
+.debug_line     0x00000000      0xb9b
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000       0xfc complex.o
  .debug_line    0x000000fc      0x21d eeprom.o
- .debug_line    0x00000319      0x2c4 gates.o
- .debug_line    0x000005dd       0xee GccApplication1.o
- .debug_line    0x000006cb      0x425 qepu.o
- .debug_line    0x00000af0       0xad uart.o
+ .debug_line    0x00000319      0x2c2 gates.o
+ .debug_line    0x000005db       0xee GccApplication1.o
+ .debug_line    0x000006c9      0x425 qepu.o
+ .debug_line    0x00000aee       0xad uart.o
 
 .debug_frame    0x00000000      0x94c
  *(.debug_frame)
