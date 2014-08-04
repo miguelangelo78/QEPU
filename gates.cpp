@@ -56,6 +56,12 @@ int Gates::custom_pow(int base,int exp){
 Complex * Gates::kronecker(Complex * vec,int qb_count){
 	int kron_size=custom_pow(2,qb_count);
 	Complex * kronvec=(Complex*)malloc(sizeof(Complex)*kron_size);
+	print_states(2,vec,"Before: ");
+	//TODO: MAKE KRONECKER VECTOR FROM VEC
+	// Vec[0]=Alpha1 Vec[1]=Beta1
+	// Vec[2]=Alpha2 Vec[3]=Beta2
+	// kronvec[0]=vec[0]*vec[2] kronvec[1]=vec[0]*vec[3]
+	// kronvec[2]=vec[1]*vec[2] kronvec[3]=vec[1]*vec[3]
 	
 	return kronvec;
 }
@@ -92,9 +98,6 @@ Complex * Gates::multiply2x2(Complex *q,Complex matrix[2][2]){
 	return result;
 }
 Complex * Gates::multiply4x4(Complex *q,Complex matrix[4][4]){
-	print_states(2,q,"Before: ");
-
-	
 	int qb_size=4;
 	Complex * result=(Complex*)malloc(sizeof(Complex)*qb_size);
 	for(int i=0;i<qb_size;i++){
