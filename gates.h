@@ -29,7 +29,7 @@ class Gates{
 		Complex* multiply8x8(Complex *q,Complex matrix[8][8]);
 		Complex * ampl2vec(int qb_count,int theta_list[6],int phi_list[6]);
 		int * vec2ampl(Complex * vec,int qb_count);
-		Complex * kronecker(int qb_count,Complex * vec[3]);
+		Complex * kronecker(Complex * vec,int qb_count);
 		int touch(double probability);
 		void setup_seed();
 };

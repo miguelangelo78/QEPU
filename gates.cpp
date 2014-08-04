@@ -39,7 +39,8 @@ int Gates::touch(double probability){
 	return RAND_MAX*probability>=rand();
 }
 
-Complex * kronecker(int qb_count,Complex * vec[3]){
+Complex * Gates::kronecker(Complex * vec,int qb_count){
+	Complex * kronvec=(Complex*)malloc(sizeof(Complex)*pow(qb_count*2,2));
 	
 }
 
@@ -61,9 +62,8 @@ Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 		vec[i+1].im=sin((theta_list[thephi_index]*M_PI)/360)*sin((phi_list[thephi_index++]*M_PI)/180);  // BETA IM
 	}
 		
-	print_states(qb_count,vec,"Before: ");
-
-	return vec;
+	
+	return kronecker(vec,qb_count*2); // PUT VEC INTO KRONECKER AND RETURN THE RESULT
 }
 int * Gates::vec2ampl(Complex * vec,int qb_count){
 	int* newthephi=(int*)malloc(sizeof(int)*2);
@@ -87,6 +87,9 @@ Complex * Gates::multiply2x2(Complex *q,Complex matrix[2][2]){
 	return result;
 }
 Complex * Gates::multiply4x4(Complex *q,Complex matrix[4][4]){
+	print_states(2,q,"Before: ");
+
+	
 	int qb_size=4;
 	Complex * result=(Complex*)malloc(sizeof(Complex)*qb_size);
 	for(int i=0;i<qb_size;i++){
