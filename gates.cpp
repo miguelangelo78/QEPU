@@ -39,6 +39,19 @@ int Gates::touch(double probability){
 	return RAND_MAX*probability>=rand();
 }
 
+Complex * kronecker(int qb_count,Complex * vec[3]){
+	
+}
+
+void print_states(int qb_count,Complex * vec,char* message){
+	s.writestrln(message);
+	for(int i=0;i<qb_count*2;i++){
+		s.writestr("R: "); s.writestr(u.int2str(vec[i].re*1000));
+		s.writestr(" . I: "); s.writestr(u.int2str(vec[i].im*1000));
+		s.writestrln("");
+	}
+}
+
 Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 	Complex* vec=(Complex*)malloc(sizeof(Complex)*(qb_count*2));
 	int thephi_index=0;
@@ -47,30 +60,18 @@ Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 		vec[i+1].re=sin((theta_list[thephi_index]*M_PI)/360)*cos((phi_list[thephi_index]*M_PI)/180);	// BETA RE
 		vec[i+1].im=sin((theta_list[thephi_index]*M_PI)/360)*sin((phi_list[thephi_index++]*M_PI)/180);  // BETA IM
 	}
-	/*vec[0].re=cos(theta*M_PI/360);						 // ALPHA RE (IM=0)
-	vec[1].re=sin((theta*M_PI)/360)*cos((phi*M_PI)/180); // BETA RE
-	vec[1].im=sin((theta*M_PI)/360)*sin((phi*M_PI)/180); // BETA IM*/
-	
-	s.writestrln("Before: ");
-	for(int i=0;i<qb_count*2;i++){
-		s.writestr("R: "); s.writestr(u.int2str(vec[i].re*1000));
-		s.writestr(" . I: "); s.writestr(u.int2str(vec[i].im*1000));
-		s.writestrln("");
-	}
+		
+	print_states(qb_count,vec,"Before: ");
+
 	return vec;
 }
-int * Gates::vec2ampl(Complex * vec){
+int * Gates::vec2ampl(Complex * vec,int qb_count){
 	int* newthephi=(int*)malloc(sizeof(int)*2);
 	newthephi[0]=(360*acos(vec[0].re))/M_PI;
 	newthephi[1]=(180*vec[1].arg())/M_PI;
 	
-	s.writestrln(""); s.writestrln("After: ");
-	for(int i=0;i<4;i++){
-		s.writestr("R: "); s.writestr(u.int2str(vec[i].re*1000));
-		s.writestr(" . I: "); s.writestr(u.int2str(vec[i].im*1000));
-		s.writestrln("");
-	}
-	s.writestrln("");
+	
+	print_states(qb_count,vec,"After: ");
 	return newthephi;
 }
 
@@ -112,32 +113,37 @@ int * Gates::X(int theta,int phi){
 	Complex x_matrix[2][2]{{Complex(0,0),Complex(1,0)},
 						   {Complex(1,0),Complex(0,0)}};
 	int theta_list[1]={theta}; int phi_list[1]={phi};
-	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),x_matrix));
+	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),x_matrix),1);
 }
 int * Gates::Y(int theta,int phi){
 	Complex y_matrix[2][2]{{Complex(0,0),Complex(0,-1)},
 						   {Complex(0,1),Complex(0,0)}};
-	//return vec2ampl(multiply2x2(ampl2vec(2,theta,phi),y_matrix));
+	int theta_list[1]={theta}; int phi_list[1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),y_matrix),1);
 }
 int * Gates::Z(int theta,int phi){
 	Complex z_matrix[2][2]{{Complex(1,0),Complex(0,0)},
 						   {Complex(0,0),Complex(-1,0)}};
-	//return vec2ampl(multiply2x2(ampl2vec(2,theta,phi),z_matrix));
+	int theta_list[1]={theta}; int phi_list[1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),z_matrix),1);
 }
 int * Gates::H(int theta,int phi){
 	Complex h_matrix[2][2]{{Complex(1/sqrt(2),0),Complex(1/sqrt(2),0)},
 						   {Complex(1/sqrt(2),0),Complex(-1/sqrt(2),0)}};
-	//return vec2ampl(multiply2x2(ampl2vec(2,theta,phi),h_matrix));
+	int theta_list[1]={theta}; int phi_list[1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),h_matrix),1);
 }
 int * Gates::S(int theta,int phi){
 	Complex s_matrix[2][2]{{Complex(1,0),Complex(0,0)},
 						   {Complex(0,0),Complex(0,1)}};
-	//return vec2ampl(multiply2x2(ampl2vec(2,theta,phi),s_matrix));
+	int theta_list[1]={theta}; int phi_list[1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),s_matrix),1);
 }
 int * Gates::T(int theta,int phi){
 	Complex t_matrix[2][2]{{Complex(1,0),Complex(0,0)},
 						   {Complex(0,0),Complex(1/sqrt(2),1/sqrt(2))}};
-	//return vec2ampl(multiply2x2(ampl2vec(2,theta,phi),t_matrix));
+	int theta_list[1]={theta}; int phi_list[1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),t_matrix),1);
 }
 
 int * Gates::CNO(int theta1, int phi1, int theta2,int phi2){
@@ -146,7 +152,7 @@ int * Gates::CNO(int theta1, int phi1, int theta2,int phi2){
 							 {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
 							 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)}};
 	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};						
-	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),cno_matrix));
+	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),cno_matrix),2);
 }
 int * Gates::CSI(int theta1, int phi1, int theta2,int phi2){
 	
