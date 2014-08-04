@@ -1,10 +1,42 @@
 #include "gates.h"
 #include "uart.h"
 #include "qepu.h"
-Gates::Gates(){}
+#include <stdlib.h>
+Gates::Gates(){setup_seed();}
 
 Serial s;
 QEPU::Utils u;
+
+void Gates::setup_seed(){
+	unsigned char oldADMUX = ADMUX;
+	ADMUX |=  _BV(MUX0); //choose ADC1 on PB2
+	ADCSRA |= _BV(ADPS2) |_BV(ADPS1) |_BV(ADPS0); //set prescaler to max value, 128
+
+	ADCSRA |= _BV(ADEN); //enable the ADC
+	ADCSRA |= _BV(ADSC);//start conversion
+
+	while (ADCSRA & _BV(ADSC)); //wait until the hardware clears the flag. Note semicolon!
+
+	unsigned char byte1 = ADCL;
+
+	ADCSRA |= _BV(ADSC);//start conversion
+
+	while (ADCSRA & _BV(ADSC)); //wait again note semicolon!
+
+	unsigned char byte2 = ADCL;
+
+	unsigned int seed = byte1 << 8 | byte2;
+
+	srand(seed);
+
+	ADCSRA &= ~_BV(ADEN); //disable ADC
+
+	ADMUX = oldADMUX;
+}
+
+int Gates::touch(double probability){
+	return RAND_MAX*probability>=rand();
+}
 
 Complex * Gates::ampl2vec(int theta,int phi){
 	Complex* vec=(Complex*)malloc(sizeof(Complex)*2);
@@ -100,14 +132,33 @@ int * Gates::T(int theta,int phi){
 	return vec2ampl(multiply2x2(ampl2vec(theta,phi),t_matrix));
 }
 
-//MAY NOT IMPLEMENT
-/* 
-int * Gates::Rx(int theta,int phi,int delta){
+int * Gates::CNO(int theta1, int phi1, int theta2,int phi2){
 	
 }
-int * Gates::Ry(int theta,int phi,int delta){
+int * Gates::CSI(int theta1, int phi1, int theta2,int phi2){
 	
 }
-int * Gates::Rz(int theta,int phi,int delta){
+int * Gates::SWA(int theta1, int phi1, int theta2,int phi2){
 	
-}*/
+}
+int * Gates::INC(int theta1, int phi1, int theta2,int phi2){
+	
+}
+int * Gates::DEC(int theta1, int phi1, int theta2,int phi2){
+	
+}
+int * Gates::SWQ(int theta1, int phi1, int theta2,int phi2){
+	
+}
+int * Gates::SWI(int theta1, int phi1, int theta2,int phi2){
+	
+}
+int * Gates::ROX(int theta,int phi,int delta){
+	
+}
+int * Gates::ROY(int theta,int phi,int delta){
+	
+}
+int * Gates::ROZ(int theta,int phi,int delta){
+	
+}
