@@ -32,5 +32,6 @@ class Gates{
 		Complex * kronecker(Complex * vec,int qb_count);
 		int touch(double probability);
 		void setup_seed();
+		int custom_pow(int base,int exp);
 };
 #endif
