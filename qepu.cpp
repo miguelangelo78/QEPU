@@ -197,7 +197,9 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		//2 QUBIT GATES -
-		case 0x16: break;
+		case 0x16: 
+			gates.CNO(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+		break;
 		case 0x17: break;
 		case 0x18: break;
 		case 0x19: break;

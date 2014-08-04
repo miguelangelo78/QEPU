@@ -27,7 +27,9 @@ class Gates{
 		Complex* multiply2x2(Complex *q,Complex matrix[2][2]);
 		Complex* multiply4x4(Complex *q,Complex matrix[4][4]);
 		Complex* multiply8x8(Complex *q,Complex matrix[8][8]);
-		Complex * ampl2vec(int theta,int phi);
+		Complex * ampl2vec(int qb_count,int theta_list[6],int phi_list[6]);
+		Complex * ampl2vec4(int theta1, int phi1, int theta2,int phi2);
+		Complex * ampl2vec8(int theta1, int phi1, int theta2,int phi2,int theta3, int phi3);
 		int * vec2ampl(Complex * vec);
 		int touch(double probability);
 		void setup_seed();
