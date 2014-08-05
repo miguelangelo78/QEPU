@@ -12,7 +12,7 @@ uint16_t EEMEM randinit;
 
 void print_states(int qb_count,Complex * vec,char* message){
 	s.writestrln(message);
-	for(int i=0;i<qb_count*2;i++){
+	for(int i=0;i<qb_count;i++){
 		s.writestr("R: "); s.writestr(u.int2str(vec[i].re*1000));
 		s.writestr(" . I: "); s.writestr(u.int2str(vec[i].im*1000));
 		s.writestrln("");
@@ -37,13 +37,16 @@ Complex * Gates::kronecker(Complex * vec,int qb_count){
 	if(qb_count==1) return vec;
 	int kron_size=custom_pow(2,qb_count);
 	Complex * kronvec=(Complex*)malloc(sizeof(Complex)*kron_size);
-	print_states(2,vec,"Before: ");
-	//TODO: MAKE KRONECKER VECTOR FROM VEC
+	print_states(2*2,vec,"Before: ");
+	
+	//KRONECKER ALGORITHM: 
+	/*
 	// Vec[0]=Alpha1 Vec[1]=Beta1
 	// Vec[2]=Alpha2 Vec[3]=Beta2
 	// kronvec[0]=vec[0]*vec[2] kronvec[1]=vec[0]*vec[3]
 	// kronvec[2]=vec[1]*vec[2] kronvec[3]=vec[1]*vec[3]
-   
+	*/
+	
 	int vec1i=0;
 	int vec2i_default=qb_count;
 	int vec2i=vec2i_default;
@@ -53,20 +56,17 @@ Complex * Gates::kronecker(Complex * vec,int qb_count){
 	}
 	
 	//TOUCH THE ENTANGLED/SUPERPOSITIONED QUBIT BEFORE GIVING IT TO A MATRIX:
-	for(int i=0;i<kron_size;i++){
-		//s.writestrln(u.int2str(rand()%100));
-		//s.writestrln(u.int2str(touch(kronvec[i].re)));
-		if(touch(kronvec[i].re)==1){
+	int binary_touch=1;
+	while(binary_touch)	for(int i=0;i<kron_size;i++)
+		if(touch(kronvec[i].re)==binary_touch){
 			for(int j=0;j<kron_size;j++){kronvec[j].re=0; kronvec[j].im=0;}
-			kronvec[i].re=1;
+			kronvec[i].re=binary_touch;
+			binary_touch=0;
 			break;
 		}
-	}
-	s.writestrln("Kronecker: ");
-	for(int i=0;i<kron_size;i++){
-		s.writestr(u.int2str(i)); s.writestr(": ");
-		s.writestrln(u.int2str(kronvec[i].re*1000));
-	}
+	
+	print_states(kron_size,kronvec,"Kronecker: ");
+
 	return kronvec;
 }
 
@@ -86,7 +86,7 @@ int * Gates::vec2ampl(Complex * vec,int qb_count){
 	newthephi[1]=(180*vec[1].arg())/M_PI;
 	
 	
-	print_states(qb_count,vec,"After: ");
+	print_states(qb_count*2,vec,"After: ");
 	return newthephi;
 }
 
