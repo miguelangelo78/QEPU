@@ -62,7 +62,12 @@ Complex * Gates::kronecker(Complex * vec,int qb_count){
 	// Vec[2]=Alpha2 Vec[3]=Beta2
 	// kronvec[0]=vec[0]*vec[2] kronvec[1]=vec[0]*vec[3]
 	// kronvec[2]=vec[1]*vec[2] kronvec[3]=vec[1]*vec[3]
-	
+    /**/
+    for(int i=0;i<qb_count;i++){
+    	kronvec[i]=vec[0]*vec[2];
+    	
+    }
+    /**/
 	return kronvec;
 }
 
