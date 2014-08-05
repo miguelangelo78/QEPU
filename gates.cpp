@@ -3,10 +3,12 @@
 #include "qepu.h"
 #include <stdarg.h>
 #include <stdlib.h>
+#include <avr/eeprom.h>
 Gates::Gates(){setup_seed();}
 
 Serial s;
 QEPU::Utils u;
+uint16_t EEMEM randinit;
 
 void print_states(int qb_count,Complex * vec,char* message){
 	s.writestrln(message);
@@ -18,30 +20,8 @@ void print_states(int qb_count,Complex * vec,char* message){
 }
 
 void Gates::setup_seed(){
-	unsigned char oldADMUX = ADMUX;
-	ADMUX |=  _BV(MUX0); //choose ADC1 on PB2
-	ADCSRA |= _BV(ADPS2) |_BV(ADPS1) |_BV(ADPS0); //set prescaler to max value, 128
-
-	ADCSRA |= _BV(ADEN); //enable the ADC
-	ADCSRA |= _BV(ADSC);//start conversion
-
-	while (ADCSRA & _BV(ADSC)); //wait until the hardware clears the flag. Note semicolon!
-
-	unsigned char byte1 = ADCL;
-
-	ADCSRA |= _BV(ADSC);//start conversion
-
-	while (ADCSRA & _BV(ADSC)); //wait again note semicolon!
-
-	unsigned char byte2 = ADCL;
-
-	unsigned int seed = byte1 << 8 | byte2;
-
-	srand(seed);
-
-	ADCSRA &= ~_BV(ADEN); //disable ADC
-
-	ADMUX = oldADMUX;
+	srand(eeprom_read_word(&randinit));
+	eeprom_write_word(&randinit,rand()%10000);
 }
 
 int Gates::touch(double probability){
@@ -54,6 +34,7 @@ int Gates::custom_pow(int base,int exp){
 }
 
 Complex * Gates::kronecker(Complex * vec,int qb_count){
+	if(qb_count==1) return vec;
 	int kron_size=custom_pow(2,qb_count);
 	Complex * kronvec=(Complex*)malloc(sizeof(Complex)*kron_size);
 	print_states(2,vec,"Before: ");
@@ -62,12 +43,30 @@ Complex * Gates::kronecker(Complex * vec,int qb_count){
 	// Vec[2]=Alpha2 Vec[3]=Beta2
 	// kronvec[0]=vec[0]*vec[2] kronvec[1]=vec[0]*vec[3]
 	// kronvec[2]=vec[1]*vec[2] kronvec[3]=vec[1]*vec[3]
-    /**/
-    for(int i=0;i<qb_count;i++){
-    	kronvec[i]=vec[0]*vec[2];
-    	
-    }
-    /**/
+   
+	int vec1i=0;
+	int vec2i_default=qb_count;
+	int vec2i=vec2i_default;
+	for(int i=0;i<kron_size;i++){
+    	if(vec2i==qb_count*2){vec2i=vec2i_default;vec1i++;}
+		kronvec[i]=vec[vec1i].mul(vec[vec2i++]);
+	}
+	
+	//TOUCH THE ENTANGLED/SUPERPOSITIONED QUBIT BEFORE GIVING IT TO A MATRIX:
+	for(int i=0;i<kron_size;i++){
+		//s.writestrln(u.int2str(rand()%100));
+		//s.writestrln(u.int2str(touch(kronvec[i].re)));
+		if(touch(kronvec[i].re)==1){
+			for(int j=0;j<kron_size;j++){kronvec[j].re=0; kronvec[j].im=0;}
+			kronvec[i].re=1;
+			break;
+		}
+	}
+	s.writestrln("Kronecker: ");
+	for(int i=0;i<kron_size;i++){
+		s.writestr(u.int2str(i)); s.writestr(": ");
+		s.writestrln(u.int2str(kronvec[i].re*1000));
+	}
 	return kronvec;
 }
 
