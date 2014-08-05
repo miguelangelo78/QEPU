@@ -33,7 +33,12 @@ int Gates::custom_pow(int base,int exp){
 	return result;
 }
 
-Complex * Gates::kronecker(Complex * vec,int qb_count){
+Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
+	s.writestr("REVERSING KRON");
+	return kron;
+}
+
+Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
 	if(qb_count==1) return vec;
 	int kron_size=custom_pow(2,qb_count);
 	Complex * kronvec=(Complex*)malloc(sizeof(Complex)*kron_size);
@@ -55,16 +60,17 @@ Complex * Gates::kronecker(Complex * vec,int qb_count){
 		kronvec[i]=vec[vec1i].mul(vec[vec2i++]);
 	}
 	
-	//TOUCH THE ENTANGLED/SUPERPOSITIONED QUBIT BEFORE GIVING IT TO A MATRIX:
-	int binary_touch=1;
-	while(binary_touch)	for(int i=0;i<kron_size;i++)
-		if(touch(kronvec[i].re)==binary_touch){
-			for(int j=0;j<kron_size;j++){kronvec[j].re=0; kronvec[j].im=0;}
-			kronvec[i].re=binary_touch;
-			binary_touch=0;
-			break;
-		}
-	
+	if(touch_enable){
+		//TOUCH THE ENTANGLED/SUPERPOSITIONED QUBIT BEFORE GIVING IT TO A MATRIX:
+		int binary_touch=1;
+		while(binary_touch)	for(int i=0;i<kron_size;i++)
+			if(touch(kronvec[i].re)==binary_touch){
+				for(int j=0;j<kron_size;j++){kronvec[j].re=0; kronvec[j].im=0;}
+				kronvec[i].re=binary_touch;
+				binary_touch=0;
+				break;
+			}
+	}
 	print_states(kron_size,kronvec,"Kronecker: ");
 
 	return kronvec;
@@ -78,13 +84,13 @@ Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 		vec[i+1].re=sin((theta_list[thephi_index]*M_PI)/360)*cos((phi_list[thephi_index]*M_PI)/180);	// BETA RE
 		vec[i+1].im=sin((theta_list[thephi_index]*M_PI)/360)*sin((phi_list[thephi_index++]*M_PI)/180);  // BETA IM
 	}
-	return kronecker(vec,qb_count); // PUT VEC INTO KRONECKER AND RETURN THE RESULT
+	return kronecker(vec,qb_count,true); // PUT VEC INTO KRONECKER AND RETURN THE RESULT
 }
 int * Gates::vec2ampl(Complex * vec,int qb_count){
+	if(qb_count>1) vec=reverse_kronecker(vec,custom_pow(2,qb_count));
 	int* newthephi=(int*)malloc(sizeof(int)*2);
 	newthephi[0]=(360*acos(vec[0].re))/M_PI;
 	newthephi[1]=(180*vec[1].arg())/M_PI;
-	
 	
 	print_states(qb_count*2,vec,"After: ");
 	return newthephi;
