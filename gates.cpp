@@ -7,14 +7,14 @@
 Gates::Gates(){setup_seed();}
 
 Serial s;
-QEPU::Utils u;
+QEPU::Utils utils;
 uint16_t EEMEM randinit;
 
 void print_states(int qb_count,Complex * vec,char* message){
 	s.writestrln(message);
 	for(int i=0;i<qb_count;i++){
-		s.writestr("R: "); s.writestr(u.int2str(vec[i].re*1000));
-		s.writestr(" . I: "); s.writestr(u.int2str(vec[i].im*1000));
+		s.writestr("R: "); s.writestr(utils.int2str(vec[i].re*1000));
+		s.writestr(" . I: "); s.writestr(utils.int2str(vec[i].im*1000));
 		s.writestrln("");
 	}
 }
@@ -34,8 +34,18 @@ int Gates::custom_pow(int base,int exp){
 }
 
 Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
-	s.writestr("REVERSING KRON");
-	return kron;
+	int reversed_kron_size=(log(kron_size)/log(2))*2;
+	Complex * reversed_kronecker=(Complex*)malloc(sizeof(Complex)*reversed_kron_size);
+		
+	for(int i=0;i<kron_size;i+=2)
+		if(kron[i].re==1){
+			reversed_kronecker[i]=Complex(0,0); reversed_kronecker[i+1]=Complex(1,0);
+		}else{
+			reversed_kronecker[i]=Complex(1,0); reversed_kronecker[i+1]=Complex(0,0);
+		}
+		
+	print_states(reversed_kron_size,reversed_kronecker,"REVERSED KRONECKER AFTER MULTIPLICATION:");
+	return reversed_kronecker;
 }
 
 Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
@@ -87,12 +97,13 @@ Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 	return kronecker(vec,qb_count,true); // PUT VEC INTO KRONECKER AND RETURN THE RESULT
 }
 int * Gates::vec2ampl(Complex * vec,int qb_count){
-	if(qb_count>1) vec=reverse_kronecker(vec,custom_pow(2,qb_count));
+	int kron_size=custom_pow(2,qb_count);
+	if(qb_count>1) vec=reverse_kronecker(vec,kron_size);
 	int* newthephi=(int*)malloc(sizeof(int)*2);
 	newthephi[0]=(360*acos(vec[0].re))/M_PI;
 	newthephi[1]=(180*vec[1].arg())/M_PI;
 	
-	print_states(qb_count*2,vec,"After: ");
+	print_states(kron_size,vec,"After: ");
 	return newthephi;
 }
 
