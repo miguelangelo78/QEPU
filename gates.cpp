@@ -37,8 +37,6 @@ Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
 	int reversed_kron_size=(log(kron_size)/log(2))*2;
 	Complex * reversed_kronecker=(Complex*)malloc(sizeof(Complex)*reversed_kron_size);
 		
-	//TEMPORARY
-	reversed_kronecker=kron;
 	for(int i=0;i<kron_size;i++)
 		if(kron[i].re==1){
 			char *toBin=utils.int2binstr(i,reversed_kron_size);
@@ -106,7 +104,7 @@ int * Gates::vec2ampl(Complex * vec,int qb_count){
 	int kron_size=custom_pow(2,qb_count);
 	if(qb_count>1) vec=reverse_kronecker(vec,kron_size);
 	
-	int* newthephi=(int*)malloc(sizeof(int)*2);
+	int* newthephi=(int*)malloc(sizeof(int)*(qb_count*2));
 	newthephi[0]=(360*acos(vec[0].re))/M_PI;
 	newthephi[1]=(180*vec[1].arg())/M_PI;
 	
