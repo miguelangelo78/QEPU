@@ -17,6 +17,7 @@
 #include <util/delay.h>
 #include <math.h>
 #include <avr/io.h>
+#include <limits.h>
 #include "uart.h"
 #include "eeprom.h"
 #include "gates.h"
@@ -31,6 +32,7 @@ class QEPU{
 			int countdigits(int dec);
 			int concint(int n1,int n2);
 			int delay(int ms);
+			char *int2binstr(int num,int strlength);
 	};
 		QEPU();
 		void run();

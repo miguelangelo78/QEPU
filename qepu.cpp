@@ -50,6 +50,19 @@ void QEPU::dumpmem(){
 	}
 }
 
+char * QEPU::Utils::int2binstr(int num,int strlength){
+    char * str = (char*)malloc(strlength + 1);
+    if(!str) return NULL;
+    str[strlength] = 0;
+
+    // type punning because signed shift is implementation-defined
+    unsigned u = *(unsigned *)&num;
+    for(; strlength--; u >>= 1)
+    str[strlength] = u & 1 ? '1' : '0';
+
+    return str;
+}
+
 char* QEPU::Utils::char2str(char c){
 	char*str=(char*)malloc(sizeof(char));
 	sprintf(str,"%d",c);
