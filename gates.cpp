@@ -39,10 +39,9 @@ Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
 		
 	for(int i=0;i<kron_size;i++)
 		if(kron[i].re==1){
-			char *toBin=utils.int2binstr(i,log(kron_size)/log(2));
-			s.writestrln(toBin);
+			char *toBin=utils.int2binstr(i,reversed_kron_size);
 			int index_rev_kro=0; //USE ITS OWN INDEX BECAUSE J IS THE INDEX OF TOBIN AN TOBIN HAS TO GO REVERSED
-			for(int j=0;j<reversed_kron_size;j++){
+			for(int j=reversed_kron_size-1;j>=0;j--){
 				if(toBin[j]=='1'){
 					reversed_kronecker[index_rev_kro]=Complex(0,0); reversed_kronecker[index_rev_kro+1]=Complex(1,0);
 				}else{
@@ -52,7 +51,6 @@ Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
 			}
 			break;
 		}
-	print_states(reversed_kron_size,reversed_kronecker,"Reversed kronecker AFTER mul: ");
 	return reversed_kronecker;
 }
 
@@ -60,6 +58,15 @@ Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
 	if(qb_count==1) return vec;
 	int kron_size=custom_pow(2,qb_count);
 	Complex * kronvec=(Complex*)malloc(sizeof(Complex)*kron_size);
+	print_states(2*2,vec,"Before: ");
+	
+	//KRONECKER ALGORITHM: 
+	/*
+	// Vec[0]=Alpha1 Vec[1]=Beta1
+	// Vec[2]=Alpha2 Vec[3]=Beta2
+	// kronvec[0]=vec[0]*vec[2] kronvec[1]=vec[0]*vec[3]
+	// kronvec[2]=vec[1]*vec[2] kronvec[3]=vec[1]*vec[3]
+	*/
 	
 	int vec1i=0;
 	int vec2i_default=qb_count;
@@ -80,7 +87,6 @@ Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
 				break;
 			}
 	}
-	print_states(kron_size,kronvec,"Kronecker: ");
 	return kronvec;
 }
 
@@ -92,7 +98,6 @@ Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 		vec[i+1].re=sin((theta_list[thephi_index]*M_PI)/360)*cos((phi_list[thephi_index]*M_PI)/180);	// BETA RE
 		vec[i+1].im=sin((theta_list[thephi_index]*M_PI)/360)*sin((phi_list[thephi_index++]*M_PI)/180);  // BETA IM
 	}
-	print_states(qb_count*2,vec,"Before: ");
 	return kronecker(vec,qb_count,true); // PUT VEC INTO KRONECKER AND RETURN THE RESULT
 }
 int * Gates::vec2ampl(Complex * vec,int qb_count){
@@ -100,8 +105,9 @@ int * Gates::vec2ampl(Complex * vec,int qb_count){
 	if(qb_count>1) vec=reverse_kronecker(vec,kron_size);
 	
 	int* newthephi=(int*)malloc(sizeof(int)*(qb_count*2));
-	for(int i=0;i<qb_count*2;i++) if(i%2==0) newthephi[i]=(360*acos(vec[i].re))/M_PI; else newthephi[i]=(180*vec[i].arg())/M_PI;
-
+	newthephi[0]=(360*acos(vec[0].re))/M_PI;
+	newthephi[1]=(180*vec[1].arg())/M_PI;
+	
 	print_states(kron_size,vec,"After: ");
 	return newthephi;
 }

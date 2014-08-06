@@ -86,11 +86,13 @@ int QEPU::Utils::countdigits(int dec){
 	return counter;
 }
 char* QEPU::Utils::int2str(int dec){
+	//char str[countdigits(dec)+1];
 	char str[100];
 	sprintf(str,"%d",dec);
 	return str;
 }
 int QEPU::Utils::dec2hex(int dec){
+	//char str[countdigits(dec)+1];
 	char str[100];
 	sprintf(str,"%x",dec);
 	return (int)strtol(str,NULL,16);
@@ -151,7 +153,8 @@ void QEPU::run(){
 }
 
 void QEPU::execute(int func,int32_t op1,int32_t op2){
-	int * newthephi=(int*)malloc(sizeof(int)*5);
+	int * newthephi=(int*)malloc(sizeof(int)*2);
+	
 	//TODO: MAKE A SWITCH ON THE FUNCTION
 	switch(func){
 		//DATA MOVEMENT AND PROGRAM CONTROL/FLUX/IO FUNCTIONS:
@@ -208,9 +211,7 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		break;
 		//2 QUBIT GATES -
 		case 0x16: 
-			newthephi=gates.CNO(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
-			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
-			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+			gates.CNO(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
 		break;
 		case 0x17: break;
 		case 0x18: break;
