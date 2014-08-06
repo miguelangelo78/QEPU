@@ -212,18 +212,54 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
-		case 0x17: break;
-		case 0x18: break;
-		case 0x19: break;
-		case 0x1A: break;
-		case 0x1B: break;
-		case 0x1C: break;
-		case 0x1D: break;
-		case 0x1E: break;
-		case 0x1F: break;
-		case 0x20: break;
-		case 0x21: break;
-		case 0x22: break;
+		case 0x17:
+			newthephi=gates.CSI(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+		break;
+		case 0x18: 
+			newthephi=gates.SWA(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+		break;
+		case 0x19: 
+			newthephi=gates.INC(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+		break;
+		case 0x1A: 
+			newthephi=gates.DEC(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+		break;
+		case 0x1B: 
+			//CSWAP (FREDKIN ) -> 3 QUBIT GATE
+		break;
+		case 0x1C: 
+			//TOFFOLI -> 3 QUBIT GATE
+		break;
+		case 0x1D: 
+			//DEUTSCH -> 3 QUBIT GATE
+		break;
+		case 0x1E: 
+			newthephi=gates.SWQ(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+		break;
+		case 0x1F: 
+			newthephi=gates.SWI(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+		break;
+		case 0x20: 
+			//ROTX -> 3 OPERATOR FUNCTION
+		break;
+		case 0x21: 
+			//ROTY -> 3 OPERATOR FUNCTION
+		break;
+		case 0x22: 
+			//ROTZ -> 3 OPERATOR FUNCTION
+		break;
 	}
 	
 	/*serial.writestr("Function: "); serial.writestr(utils.int2str(func));

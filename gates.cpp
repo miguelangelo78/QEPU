@@ -186,16 +186,36 @@ int * Gates::CNO(int theta1, int phi1, int theta2,int phi2){
 	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),cno_matrix),2);
 }
 int * Gates::CSI(int theta1, int phi1, int theta2,int phi2){
-	
+	Complex csi_matrix[4][4]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+							 {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+							 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
+							 {Complex(0,0),Complex(0,0),Complex(0,0),Complex(-1,0)}};
+	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),csi_matrix),2);
 }
 int * Gates::SWA(int theta1, int phi1, int theta2,int phi2){
-	
+	Complex swa_matrix[4][4]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+							 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
+							 {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+							 {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)}};
+	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),swa_matrix),2);	
 }
 int * Gates::INC(int theta1, int phi1, int theta2,int phi2){
-	
+	Complex inc_matrix[4][4]{{Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
+							 {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+							 {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+							 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)}};
+	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),inc_matrix),2);
 }
 int * Gates::DEC(int theta1, int phi1, int theta2,int phi2){
-	
+	/*Complex dec_matrix[4][4]{{Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+	  						 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
+							 {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
+						 	 {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)}};
+	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),dec_matrix),2);*/
 }
 int * Gates::SWQ(int theta1, int phi1, int theta2,int phi2){
 	
