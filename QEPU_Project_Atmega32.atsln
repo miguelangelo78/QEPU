@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "GccApplication1", "GccApplication1.cppproj", "{6CE5C565-1785-4970-8E05-265F244EC910}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "QEPU_Project_Atmega32", "QEPU_Project_Atmega32.cppproj", "{34C101E7-DC6A-4343-B8E4-2D3868B669AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|AVR = Release|AVR
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6CE5C565-1785-4970-8E05-265F244EC910}.Debug|AVR.ActiveCfg = Debug|AVR
-		{6CE5C565-1785-4970-8E05-265F244EC910}.Debug|AVR.Build.0 = Debug|AVR
-		{6CE5C565-1785-4970-8E05-265F244EC910}.Release|AVR.ActiveCfg = Release|AVR
-		{6CE5C565-1785-4970-8E05-265F244EC910}.Release|AVR.Build.0 = Release|AVR
+		{34C101E7-DC6A-4343-B8E4-2D3868B669AC}.Debug|AVR.ActiveCfg = Debug|AVR
+		{34C101E7-DC6A-4343-B8E4-2D3868B669AC}.Debug|AVR.Build.0 = Debug|AVR
+		{34C101E7-DC6A-4343-B8E4-2D3868B669AC}.Release|AVR.ActiveCfg = Release|AVR
+		{34C101E7-DC6A-4343-B8E4-2D3868B669AC}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

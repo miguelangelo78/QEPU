@@ -8,9 +8,9 @@ eeprom.cpp
 
 gates.cpp
 
-GccApplication1.cpp
-
 qepu.cpp
+
+QEPU_Project_Atmega32.cpp
 
 uart.cpp
 

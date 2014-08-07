@@ -1,4 +1,4 @@
-#define F_CPU 1000000UL  // 1 MHz
+//#define F_CPU 1000000UL  // 1 MHz
 #include <avr/io.h>
 #include <util/delay.h>
 #include "eeprom.h"

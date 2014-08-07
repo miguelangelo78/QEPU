@@ -1,6 +1,6 @@
 #include "qepu.h"
 int main(void){
-	QEPU qepu; 
+	QEPU qepu;
 	qepu.run();
 	while(1);
 }

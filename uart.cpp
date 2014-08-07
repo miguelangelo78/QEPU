@@ -1,16 +1,11 @@
 #include "uart.h"
 Serial::Serial(){
-	//Set Baud rate
-	 //UBRRL = ubrr_value;
-	 //UBRRH = (ubrr_value>>8);
-	 UBRRL = 0x33;
-	 UBRRH = 0x00;
+	 //Set Baud rate
+	 int ubrr=51;
+	 UBRRL = ubrr;
+	 UBRRH = (ubrr>>8);
 	 
-	 /*Set Frame Format
-	 >> Asynchronous mode
-	 >> No Parity
-	 >> 1 StopBit
-	 >> char size 8 */
+	 //Set Frame Format
 	 UCSRC=(1<<URSEL)|(3<<UCSZ0);
 	 
 	 //Enable The receiver and transmitter
