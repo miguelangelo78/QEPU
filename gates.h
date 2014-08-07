@@ -1,5 +1,8 @@
 #ifndef GATES_H_
 #define GATES_H_
+#define QB_SIZE1 1
+#define QB_SIZE2 2
+#define QB_SIZE3 3
 #define M_PI 3.14159265358979323846
 #include <math.h>
 #include <stdio.h>

@@ -141,94 +141,113 @@ Complex * Gates::multiply8x8(Complex *q,Complex matrix[8][8]){
 }
 
 int * Gates::X(int theta,int phi){
-	Complex x_matrix[2][2]{{Complex(0,0),Complex(1,0)},
-						   {Complex(1,0),Complex(0,0)}};
-	int theta_list[1]={theta}; int phi_list[1]={phi};
-	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),x_matrix),1);
+	Complex x_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(0,0),Complex(1,0)},
+											 {Complex(1,0),Complex(0,0)}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),x_matrix),QB_SIZE1);
 }
 int * Gates::Y(int theta,int phi){
-	Complex y_matrix[2][2]{{Complex(0,0),Complex(0,-1)},
-						   {Complex(0,1),Complex(0,0)}};
-	int theta_list[1]={theta}; int phi_list[1]={phi};
-	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),y_matrix),1);
+	Complex y_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(0,0),Complex(0,-1)},
+											 {Complex(0,1),Complex(0,0)}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),y_matrix),QB_SIZE1);
 }
 int * Gates::Z(int theta,int phi){
-	Complex z_matrix[2][2]{{Complex(1,0),Complex(0,0)},
-						   {Complex(0,0),Complex(-1,0)}};
-	int theta_list[1]={theta}; int phi_list[1]={phi};
-	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),z_matrix),1);
+	Complex z_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(1,0),Complex(0,0)},
+											 {Complex(0,0),Complex(-1,0)}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),z_matrix),QB_SIZE1);
 }
 int * Gates::H(int theta,int phi){
-	Complex h_matrix[2][2]{{Complex(1/sqrt(2),0),Complex(1/sqrt(2),0)},
-						   {Complex(1/sqrt(2),0),Complex(-1/sqrt(2),0)}};
-	int theta_list[1]={theta}; int phi_list[1]={phi};
-	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),h_matrix),1);
+	Complex h_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(1/sqrt(2),0),Complex(1/sqrt(2),0)},
+											 {Complex(1/sqrt(2),0),Complex(-1/sqrt(2),0)}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),h_matrix),QB_SIZE1);
 }
 int * Gates::S(int theta,int phi){
-	Complex s_matrix[2][2]{{Complex(1,0),Complex(0,0)},
-						   {Complex(0,0),Complex(0,1)}};
-	int theta_list[1]={theta}; int phi_list[1]={phi};
-	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),s_matrix),1);
+	Complex s_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(1,0),Complex(0,0)},
+											 {Complex(0,0),Complex(0,1)}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),s_matrix),QB_SIZE1);
 }
 int * Gates::T(int theta,int phi){
-	Complex t_matrix[2][2]{{Complex(1,0),Complex(0,0)},
-						   {Complex(0,0),Complex(1/sqrt(2),1/sqrt(2))}};
-	int theta_list[1]={theta}; int phi_list[1]={phi};
-	return vec2ampl(multiply2x2(ampl2vec(1,theta_list,phi_list),t_matrix),1);
+	Complex t_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(1,0),Complex(0,0)},
+											 {Complex(0,0),Complex(1/sqrt(2),1/sqrt(2))}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),t_matrix),QB_SIZE1);
 }
 
 int * Gates::CNO(int theta1, int phi1, int theta2,int phi2){
-	Complex cno_matrix[4][4]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
-						     {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
-							 {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
-							 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)}};
-	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};						
-	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),cno_matrix),2);
+	Complex cno_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
+											   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)}};
+	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};						
+	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),cno_matrix),QB_SIZE2);
 }
 int * Gates::CSI(int theta1, int phi1, int theta2,int phi2){
-	Complex csi_matrix[4][4]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
-							 {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
-							 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
-							 {Complex(0,0),Complex(0,0),Complex(0,0),Complex(-1,0)}};
-	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};
-	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),csi_matrix),2);
+	Complex csi_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(0,0),Complex(-1,0)}};
+	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),csi_matrix),QB_SIZE2);
 }
 int * Gates::SWA(int theta1, int phi1, int theta2,int phi2){
-	Complex swa_matrix[4][4]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
-							 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
-							 {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
-							 {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)}};
-	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};
-	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),swa_matrix),2);	
+	Complex swa_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
+											   {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)}};
+	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),swa_matrix),QB_SIZE2);	
 }
 int * Gates::INC(int theta1, int phi1, int theta2,int phi2){
-	Complex inc_matrix[4][4]{{Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
-							 {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
-							 {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
-							 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)}};
-	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};
-	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),inc_matrix),2);
+	Complex inc_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
+											   {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)}};
+	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),inc_matrix),QB_SIZE2);
 }
 int * Gates::DEC(int theta1, int phi1, int theta2,int phi2){
-	/*Complex dec_matrix[4][4]{{Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
-	  						 {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
-							 {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
-						 	 {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)}};
-	int theta_list[2]={theta1,theta2}; int phi_list[2]={phi1,phi2};
-	return vec2ampl(multiply4x4(ampl2vec(2,theta_list,phi_list),dec_matrix),2);*/
+	Complex dec_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+	  										   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
+						 					   {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)}};
+	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),dec_matrix),QB_SIZE2);
 }
 int * Gates::SWQ(int theta1, int phi1, int theta2,int phi2){
-	
+	Complex swq_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(1,0),Complex(0,0),   Complex(0,0),   Complex(0,0)},
+	 										   {Complex(0,0),Complex(.5,.5), Complex(.5,-.5),Complex(0,0)},
+											   {Complex(0,0),Complex(.5,-.5),Complex(.5,.5), Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),   Complex(0,0),   Complex(1,0)}};
+	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),swq_matrix),QB_SIZE2);
 }
 int * Gates::SWI(int theta1, int phi1, int theta2,int phi2){
-	
+	Complex dec_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(0,1),Complex(0,0)},
+ 											   {Complex(0,0),Complex(0,1),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)}};
+	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};
+	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),dec_matrix),QB_SIZE2);
 }
 int * Gates::ROX(int theta,int phi,int delta){
-	
+	Complex rox_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(cos(delta/2),0), Complex(0,-sin(delta/2))},
+											   {Complex(0,-sin(delta/2)),Complex(cos(delta/2),0)}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),rox_matrix),QB_SIZE1);		
 }
 int * Gates::ROY(int theta,int phi,int delta){
-	
+	Complex roy_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(cos(delta/2),0),Complex(-sin(delta/2),0)},
+											   {Complex(sin(delta/2),0),Complex(cos(delta/2),0)}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),roy_matrix),QB_SIZE1);
 }
 int * Gates::ROZ(int theta,int phi,int delta){
-	
+	Complex roy_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(0,exp(-delta/2)),Complex(0,0)},
+											   {Complex(0,0),			 Complex(0,exp(delta/2))}};
+	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
+	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),roy_matrix),QB_SIZE1);
 }

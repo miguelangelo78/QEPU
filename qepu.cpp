@@ -1,5 +1,5 @@
 #include "qepu.h"
-QEPU::QEPU(){DDRA=0xFF;program_counter=0;}
+QEPU::QEPU(){serial.writestr("INITIALIZING . . . ");DDRA=0xFF;program_counter=0;}
 void QEPU::write(int index,int dim,int deg){
 	DDRB=0xFF;
 	
@@ -107,6 +107,7 @@ int QEPU::Utils::delay(int ms){
 }
 
 void QEPU::run(){
+	serial.writestrln(" RUNNING ");
 	/*EEPROM FETCH*/
 	#pragma region EEPROM_FETCH
 	int * eeprom_mem=utils.str2intarr(eeprom.readall()); //TODO: READ ALL EEPROM
