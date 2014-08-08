@@ -132,19 +132,6 @@ void QEPU::run(){
 			sprintf(op1s,"%s%x",op1s,eeprom_splitted[program_counter][k+FIXED_OP1_OFFSET]); // HEX CONCAT TO STRING (OP1 FETCH)
 			sprintf(op2s,"%s%x",op2s,eeprom_splitted[program_counter][k+FIXED_OP2_OFFSET]); // HEX CONCAT TO STRING (OP2 FETCH)
 		}
-		//DYNAMIC WIDTH INSTRUCTION: (choose one)
-		/*int ops=0;
-		  for(int j=0;j<strlen(eeprom_mem);j++)
-			if(eeprom_splitted[i][j]==0x2C)
-				switch(++ops){
-					case 1: func=eeprom_splitted[i][j+1]; break;
-					case 2: 
-						for(int k=j+1;true;k++) if(eeprom_splitted[i][k]==0x2C) break; else op1[k-(j+1)]=eeprom_splitted[i][k];
-						break;
-					case 3:
-						for(int k=j+1;true;k++) if(eeprom_splitted[i][k]==0x2C) break; else op2[k-(j+1)]=eeprom_splitted[i][k];
-						break;
-				}*/
 		execute(func,strtol(op1s,NULL,16),strtol(op2s,NULL,16)); //*INSTRUCTION DECODE AND EXECUTE*/
 	}
 	dumpmem();
@@ -252,14 +239,17 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
-		case 0x20: 
-			//ROTX -> 3 OPERATOR FUNCTION
+		case 0x20:
+			newthephi=gates.ROX(read(op1,THE),read(op1,PHI),op2);
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 		break;
 		case 0x21: 
-			//ROTY -> 3 OPERATOR FUNCTION
+			newthephi=gates.ROY(read(op1,THE),read(op1,PHI),op2);
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 		break;
 		case 0x22: 
-			//ROTZ -> 3 OPERATOR FUNCTION
+			newthephi=gates.ROZ(read(op1,THE),read(op1,PHI),op2);
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 		break;
 	}
 	
