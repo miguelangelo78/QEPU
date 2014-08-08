@@ -40,7 +40,6 @@ Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
 	for(int i=0;i<kron_size;i++)
 		if(kron[i].re==1){
 			char *toBin=utils.int2binstr(i,log(kron_size)/log(2));
-			s.writestrln(toBin);
 			int index_rev_kro=0; //USE ITS OWN INDEX BECAUSE J IS THE INDEX OF TOBIN AN TOBIN HAS TO GO REVERSED
 			for(int j=0;j<reversed_kron_size;j++){
 				if(toBin[j]=='1'){
@@ -52,7 +51,7 @@ Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
 			}
 			break;
 		}
-	print_states(reversed_kron_size,reversed_kronecker,"Reversed kronecker AFTER mul: ");
+	//print_states(reversed_kron_size,reversed_kronecker,"Reversed kronecker AFTER mul: ");
 	return reversed_kronecker;
 }
 
@@ -80,7 +79,7 @@ Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
 				break;
 			}
 	}
-	print_states(kron_size,kronvec,"Kronecker: ");
+	//print_states(kron_size,kronvec,"Kronecker: ");
 	return kronvec;
 }
 
@@ -202,18 +201,18 @@ int * Gates::SWA(int theta1, int phi1, int theta2,int phi2){
 	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),swa_matrix),QB_SIZE2);	
 }
 int * Gates::INC(int theta1, int phi1, int theta2,int phi2){
-	Complex inc_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
-											   {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
-											   {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
-											   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)}};
+	Complex inc_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
+											   {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)}};
 	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};
 	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),inc_matrix),QB_SIZE2);
 }
 int * Gates::DEC(int theta1, int phi1, int theta2,int phi2){
-	Complex dec_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
-	  										   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)},
-											   {Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
-						 					   {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)}};
+	Complex dec_matrix[QB_SIZE2*2][QB_SIZE2*2]{{Complex(0,0),Complex(0,0),Complex(0,0),Complex(1,0)},
+											   {Complex(1,0),Complex(0,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(1,0),Complex(0,0),Complex(0,0)},
+											   {Complex(0,0),Complex(0,0),Complex(1,0),Complex(0,0)}};
 	int theta_list[QB_SIZE2]={theta1,theta2}; int phi_list[QB_SIZE2]={phi1,phi2};
 	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),dec_matrix),QB_SIZE2);
 }
@@ -234,20 +233,23 @@ int * Gates::SWI(int theta1, int phi1, int theta2,int phi2){
 	return vec2ampl(multiply4x4(ampl2vec(QB_SIZE2,theta_list,phi_list),dec_matrix),QB_SIZE2);
 }
 int * Gates::ROX(int theta,int phi,int delta){
-	Complex rox_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(cos(delta/2),0), Complex(0,-sin(delta/2))},
-											   {Complex(0,-sin(delta/2)),Complex(cos(delta/2),0)}};
+	float delta_float=(delta*M_PI)/180;
+	Complex rox_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(cos(delta_float/2),0), Complex(0,-sin(delta_float/2))},
+											   {Complex(0,-sin(delta_float/2)),Complex(cos(delta_float/2),0)}};
 	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
 	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),rox_matrix),QB_SIZE1);		
 }
 int * Gates::ROY(int theta,int phi,int delta){
-	Complex roy_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(cos(delta/2),0),Complex(-sin(delta/2),0)},
-											   {Complex(sin(delta/2),0),Complex(cos(delta/2),0)}};
+	float delta_float=(delta*M_PI)/180;
+	Complex roy_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(cos(delta_float/2),0),Complex(-sin(delta_float/2),0)},
+											   {Complex(sin(delta_float/2),0),Complex(cos(delta_float/2),0)}};
 	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
 	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),roy_matrix),QB_SIZE1);
 }
 int * Gates::ROZ(int theta,int phi,int delta){
-	Complex roy_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(0,exp(-delta/2)),Complex(0,0)},
-											   {Complex(0,0),			 Complex(0,exp(delta/2))}};
+	float delta_float=(delta*M_PI)/180;
+	Complex roy_matrix[QB_SIZE1*2][QB_SIZE1*2]{{Complex(0,exp(-delta_float/2)),Complex(0,0)},
+											   {Complex(0,0),				   Complex(0,exp(delta_float/2))}};
 	int theta_list[QB_SIZE1]={theta}; int phi_list[QB_SIZE1]={phi};
 	return vec2ampl(multiply2x2(ampl2vec(QB_SIZE1,theta_list,phi_list),roy_matrix),QB_SIZE1);
 }

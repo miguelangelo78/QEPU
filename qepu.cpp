@@ -107,7 +107,9 @@ int QEPU::Utils::delay(int ms){
 }
 
 void QEPU::run(){
-	serial.writestrln(" RUNNING ");
+	serial.writestrln(" RUNNING "); serial.writestrln("");
+	
+	dumpmem();
 	/*EEPROM FETCH*/
 	#pragma region EEPROM_FETCH
 	int * eeprom_mem=utils.str2intarr(eeprom.readall()); //TODO: READ ALL EEPROM
