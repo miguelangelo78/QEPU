@@ -3,6 +3,9 @@
 #define QB_SIZE1 1
 #define QB_SIZE2 2
 #define QB_SIZE3 3
+#define	QB1_MATRIX_SIZE 2
+#define	QB2_MATRIX_SIZE 4
+#define QB3_MATRIX_SIZE 8
 #define M_PI 3.14159265358979323846
 #include <math.h>
 #include <stdio.h>
@@ -26,6 +29,9 @@ class Gates{
 		int * ROX(int theta,int phi,int delta);
 		int * ROY(int theta,int phi,int delta);
 		int * ROZ(int theta,int phi,int delta);
+		int * CSW(int theta1, int phi1,int theta2,int phi2,int theta3,int phi3);
+		int * TOF(int theta1, int phi1,int theta2,int phi2,int theta3,int phi3);
+		int * DEU(int theta1, int phi1,int theta2,int phi2,int theta3,int phi3,int delta);
 	private:
 		Complex* multiply2x2(Complex *q,Complex matrix[2][2]);
 		Complex* multiply4x4(Complex *q,Complex matrix[4][4]);

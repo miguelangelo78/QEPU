@@ -16,6 +16,7 @@
 #define INSTR_HEIGHT 20
 #define THE 0
 #define PHI 1
+#define MAX_NEWTHEPHI 6
 #define F_CPU 14745600
 #include <util/delay.h>
 #include <math.h>

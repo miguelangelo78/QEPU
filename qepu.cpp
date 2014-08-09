@@ -147,7 +147,7 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 	serial.writestr(utils.int2str(op1)); serial.writestr(", OP2: ");
 	serial.writestr(utils.int2str(op2)); serial.writestr(", OP3: "); serial.writestrln(utils.int2str(op3));
 	
-	int * newthephi=(int*)malloc(sizeof(int)*5);
+	int * newthephi=(int*)malloc(sizeof(int)*MAX_NEWTHEPHI);
 	//TODO: MAKE A SWITCH ON THE FUNCTION
 	switch(func){
 		//DATA MOVEMENT AND PROGRAM CONTROL/FLUX/IO FUNCTIONS:
@@ -242,14 +242,26 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
-		case 0x1B: 
+		case 0x1B:
 			//CSWAP (FREDKIN ) -> 3 QUBIT GATE
+			newthephi=gates.CSW(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI),read(op3,THE),read(op3,PHI));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 		break;
 		case 0x1C: 
 			//TOFFOLI -> 3 QUBIT GATE
+			newthephi=gates.TOF(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI),read(op3,THE),read(op3,PHI));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 		break;
 		case 0x1D: 
 			//DEUTSCH -> 3 QUBIT GATE
+			newthephi=gates.DEU(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI),read(op3,THE),read(op3,PHI),read(0,THE));
+			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
+			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
+			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 		break;
 		case 0x1E: 
 			newthephi=gates.SWQ(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
