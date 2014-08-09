@@ -107,6 +107,7 @@ int QEPU::Utils::delay(int ms){
 }
 
 void QEPU::run(){
+	//TEMPORARY PRINTING FOR DEBUGGING PURPOSES
 	serial.writestrln(" RUNNING "); serial.writestrln("");
 	
 	dumpmem();
@@ -127,20 +128,25 @@ void QEPU::run(){
 	#pragma region INSTRUCTION_FETCH
 	//TODO: EXECUTE INSTRUCTIONS INSIDE THE ARRAY OF INSTRUCTIONS:
 	for(program_counter=0;program_counter<line;program_counter++){
-		int func=0;	char op1s[OP1_WIDTH]=""; char op2s[OP2_WIDTH]="";		
+		int func=0;	char op1s[OP1_WIDTH]=""; char op2s[OP2_WIDTH]=""; char op3s[OP3_WIDTH]="";	
 		//FIXED WIDTH INSTRUCTION:
 		func=eeprom_splitted[program_counter][FIXED_FUNC_OFFSET]; // FUNCTION FETCH
 		for(int k=0;k<QUBIT_BYTE_SIZE;k++){
 			sprintf(op1s,"%s%x",op1s,eeprom_splitted[program_counter][k+FIXED_OP1_OFFSET]); // HEX CONCAT TO STRING (OP1 FETCH)
 			sprintf(op2s,"%s%x",op2s,eeprom_splitted[program_counter][k+FIXED_OP2_OFFSET]); // HEX CONCAT TO STRING (OP2 FETCH)
+			sprintf(op3s,"%s%x",op3s,eeprom_splitted[program_counter][k+FIXED_OP3_OFFSET]); // HEX CONCAT TO STRING (OP3 FETCH)
 		}
-		execute(func,strtol(op1s,NULL,16),strtol(op2s,NULL,16)); //*INSTRUCTION DECODE AND EXECUTE*/
+		execute(func,strtol(op1s,NULL,16),strtol(op2s,NULL,16),strtol(op3s,NULL,16)); //*INSTRUCTION DECODE AND EXECUTE*/
 	}
 	dumpmem();
 	#pragma endregion
 }
 
-void QEPU::execute(int func,int32_t op1,int32_t op2){
+void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
+	serial.writestr("Function: "); serial.writestr(utils.int2str(func)); serial.writestr(", OP1: ");
+	serial.writestr(utils.int2str(op1)); serial.writestr(", OP2: ");
+	serial.writestr(utils.int2str(op2)); serial.writestr(", OP3: "); serial.writestrln(utils.int2str(op3));
+	
 	int * newthephi=(int*)malloc(sizeof(int)*5);
 	//TODO: MAKE A SWITCH ON THE FUNCTION
 	switch(func){
@@ -152,18 +158,32 @@ void QEPU::execute(int func,int32_t op1,int32_t op2){
 		case 0x02: /*JMP(jump)*/ 
 			program_counter=op1-1; 
 		break;
-		case 0x03: /*INT(interrupt)*/ break;
-		case 0x04: /*CME(compare)*/ break;
-		case 0x05: /*HLT(halt)*/ break;
-		case 0x06: /*POP(pop)*/ break;
-		case 0x07: /*PSH(push)*/ break;
-		case 0x08: /*RET(return)*/ break;
-		case 0x09: /*END(end)*/ break;
+		case 0x03: /*INT(interrupt)*/
+			//NEEDS TABLE SYSTEM
+		break;
+		case 0x04: /*CME(compare)*/
+			//NEEDS FLAG SYSTEM
+		break;
+		case 0x05: /*HLT(halt)*/ while(1); break;
+		case 0x06: /*POP(pop)*/ 
+			//NEEDS MEMORY SYSTEM
+		break;
+		case 0x07: /*PSH(push)*/ 
+			//NEEDS MEMORY SYSTEM
+		break;
+		case 0x08: /*RET(return)*/ 
+			//NEEDS ADDRESS FROM 'JUMP' SYSTEM
+		break;
+		case 0x09: /*END(end)*/ while(1); break;
 		case 0x0A: /*DLY(delay)*/ 
 			utils.delay(op1);	break;
-		case 0x0B: /*NOP(nop)*/ break;
-		case 0x0C: /*LOD(load)*/ break;
-		case 0x0D: /*STR(store)*/ break;
+		case 0x0B: /*NOP(nop) - DOES NOTHING*/ break;
+		case 0x0C: /*LOD(load)*/
+			//NEEDS MEMORY SYSTEM
+		break;
+		case 0x0D: /*STR(store)*/ 
+			//NEEDS MEMORY SYSTEM
+		break;
 		case 0x0E: /*CMT(constantmovtheta)*/ 
 			write(op1,THE,op2);
 		break;
