@@ -143,10 +143,6 @@ void QEPU::run(){
 }
 
 void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
-	serial.writestr("Function: "); serial.writestr(utils.int2str(func)); serial.writestr(", OP1: ");
-	serial.writestr(utils.int2str(op1)); serial.writestr(", OP2: ");
-	serial.writestr(utils.int2str(op2)); serial.writestr(", OP3: "); serial.writestrln(utils.int2str(op3));
-	
 	int * newthephi=(int*)malloc(sizeof(int)*MAX_NEWTHEPHI);
 	//TODO: MAKE A SWITCH ON THE FUNCTION
 	switch(func){
