@@ -61,7 +61,7 @@ Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
 	Complex * kronvec=(Complex*)malloc(sizeof(Complex)*kron_size);
 	
 	int vec1i=0;
-	int vec2i_default=qb_count;
+	int vec2i_default=VECTOR_QUBIT_SIZE;
 	int vec2i=vec2i_default;
 	for(int i=0;i<kron_size;i++){
     	if(vec2i==qb_count*2){vec2i=vec2i_default;vec1i++;}
@@ -100,7 +100,7 @@ int * Gates::vec2ampl(Complex * vec,int qb_count){
 	
 	int* newthephi=(int*)malloc(sizeof(int)*(qb_count*2));
 	for(int i=0;i<qb_count*2;i++) if(i%2==0) newthephi[i]=(360*acos(vec[i].re))/M_PI; else newthephi[i]=(180*vec[i].arg())/M_PI;
-
+	
 	print_states(kron_size,vec,"After: ");
 	return newthephi;
 }

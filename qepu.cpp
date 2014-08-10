@@ -86,7 +86,7 @@ int QEPU::Utils::countdigits(int dec){
 	return counter;
 }
 char* QEPU::Utils::int2str(int dec){
-	char str[100];
+	char str[10];
 	sprintf(str,"%d",dec);
 	return str;
 }
