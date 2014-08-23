@@ -1,6 +1,8 @@
 #include "sram.h"
 
-SRAM::SRAM(){}
+SRAM::SRAM(){
+	CTRLMEM_DIR=OUTPUT;
+}
 	
 int8_t SRAM::read(int8_t address){
 	MEM_ADDRESS_DIR=OUTPUT;

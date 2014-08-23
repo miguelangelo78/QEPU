@@ -25,11 +25,11 @@ class QEPU{
 		void deselect_qubit();
 		void close_bus();
 		void execute(int func,int32_t op1,int32_t op2,int32_t op3);
-		EEProm eeprom;
 		Serial serial;
+		EEProm eeprom;
 		SRAM sram;
-		int program_counter;
 		Gates gates;
 		Utils utils;
+		int program_counter;
 };
 #endif

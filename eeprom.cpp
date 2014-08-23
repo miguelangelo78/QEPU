@@ -1,6 +1,3 @@
-//#define F_CPU 1000000UL  // 1 MHz
-#include <avr/io.h>
-#include <util/delay.h>
 #include "eeprom.h"
 
 EEProm::EEProm(){
@@ -90,7 +87,6 @@ uint8_t EEProm::write(uint16_t address,uint8_t data)
 
 uint8_t EEProm::read(uint16_t address){
 	uint8_t data;
-
 	//Initiate a Dummy Write Sequence to start Random Read
 	do
 	{
@@ -195,8 +191,9 @@ uint8_t EEProm::read(uint16_t address){
 }
 char* EEProm::readall(){
 	char eeprom_mem[MAX_MEM_SIZE];
+	
 	for(int i=0;MAX_MEM_SIZE;i++) {
-		eeprom_mem[i]=read(i); 
+		eeprom_mem[i]=read(i);
 		if(eeprom_mem[i]==0xFF && eeprom_mem[i-1]==0xFF && eeprom_mem[i-2]==0xFF && eeprom_mem[i-3]==0xFF && eeprom_mem[i-4]==0xFF) break;
 	}
 	return eeprom_mem;
