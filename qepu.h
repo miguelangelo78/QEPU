@@ -17,6 +17,14 @@
 #define THE 0
 #define PHI 1
 #define MAX_NEWTHEPHI 6
+#define HIGH 1
+#define LOW 0
+//ADDRESS BUFFER CONSTANTS
+#define ADDRESS_BUFFER_SIZE 3
+#define IN_ABBUFFER_START 2
+#define IN_ABBUFFER_CLOCK 3
+#define EO_AB 4
+#define ADDRESS_WRITE_DELAY 10
 #define F_CPU 14745600
 #include <util/delay.h>
 #include <math.h>
@@ -43,11 +51,14 @@ class QEPU{
 		void write(int index,int dim,int deg);
 		int read(int index,int dim);
 		void dumpmem();
+		void select_qubit(int index);
+		void deselect_qubit();
 	private:
 		void setdata(int bin);
 		void setctrl(int bin);
 		void setdatapin(int pin,int state);
 		void setctrlpin(int pin,int state);
+		void setbuffctrlpin(int pin,int state);
 		void execute(int func,int32_t op1,int32_t op2,int32_t op3);
 		EEProm eeprom;
 		Serial serial;

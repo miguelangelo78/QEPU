@@ -4,15 +4,16 @@ void QEPU::write(int index,int dim,int deg){
 	DDRB=0xFF;
 	
 	setdata(deg);
-	setctrl(index);
+	select_qubit(index);//setctrl(index);
 	setctrlpin(4,dim);
 	setctrlpin(6,1); // CLOCK UP LOAD
 	setctrlpin(6,0); // CLOCK DOWN LOAD
 	setdata(0);
+	deselect_qubit();
 }
 int QEPU::read(int index,int dim){
 	DDRB=0x00;
-	setctrl(index);
+	select_qubit(index); //setctrl(index);
 	//OPEN ALL AND GATES
 	setctrlpin(5,1); // CLOCK UP READ
 	setctrlpin(4,dim);
@@ -20,7 +21,38 @@ int QEPU::read(int index,int dim){
 	//CLOSE ALL AND GATES
 	setctrl(0); // CLOSE ALL CONTROLS
 	DDRB=0xFF;
+	deselect_qubit();
 	return deg_read;
+}
+void QEPU::deselect_qubit(){
+	DDRC=0xFF;
+	setbuffctrlpin(EO_AB,LOW);
+}
+void QEPU::select_qubit(int index){
+	int address_buffer[ADDRESS_BUFFER_SIZE];
+	int mask_bit_addressbuff=0b1111;
+	for(int i=0;i<ADDRESS_BUFFER_SIZE;i++){
+		address_buffer[i]=(index&mask_bit_addressbuff)>>(4*i);
+		mask_bit_addressbuff<<=4;
+	}
+	DDRA=0xFF;
+	DDRC=0xFF;
+	
+	setctrl(address_buffer[0]);
+	setbuffctrlpin(IN_ABBUFFER_START,HIGH);
+	setbuffctrlpin(IN_ABBUFFER_CLOCK,HIGH);
+	setbuffctrlpin(IN_ABBUFFER_CLOCK,LOW);
+	setbuffctrlpin(IN_ABBUFFER_START,LOW);
+	utils.delay(ADDRESS_WRITE_DELAY);
+	for(int i=1;i<ADDRESS_BUFFER_SIZE;i++){
+		setbuffctrlpin(IN_ABBUFFER_CLOCK,HIGH);
+		setbuffctrlpin(IN_ABBUFFER_CLOCK,LOW);
+		setctrl(address_buffer[i]);
+		utils.delay(ADDRESS_WRITE_DELAY);
+	}
+	setbuffctrlpin(IN_ABBUFFER_CLOCK,HIGH);
+	setbuffctrlpin(IN_ABBUFFER_CLOCK,LOW);
+	setbuffctrlpin(EO_AB,HIGH);
 }
 void QEPU::setdata(int bin){
 	PORTB=bin;
@@ -31,6 +63,10 @@ void QEPU::setctrl(int bin){
 void QEPU::setdatapin(int pin,int state){
 	PORTB&=~(1<<pin); // CLEAR PIN
 	PORTB|=(state<<pin); // SET PIN
+}
+void QEPU::setbuffctrlpin(int pin,int state){
+	PORTC&=~(1<<pin); // CLEAR PIN
+	PORTC|=(state<<pin); // SET PIN
 }
 void QEPU::setctrlpin(int pin,int state){
 	PORTA&=~(1<<pin); // CLEAR PIN
@@ -110,7 +146,6 @@ void QEPU::run(){
 	//TEMPORARY PRINTING FOR DEBUGGING PURPOSES
 	serial.writestrln(" RUNNING "); serial.writestrln("");
 	
-	dumpmem();
 	/*EEPROM FETCH*/
 	#pragma region EEPROM_FETCH
 	int * eeprom_mem=utils.str2intarr(eeprom.readall()); //TODO: READ ALL EEPROM
@@ -139,6 +174,7 @@ void QEPU::run(){
 		execute(func,strtol(op1s,NULL,16),strtol(op2s,NULL,16),strtol(op3s,NULL,16)); //*INSTRUCTION DECODE AND EXECUTE*/
 	}
 	dumpmem();
+	serial.writestr("The execution of the program has finished");
 	#pragma endregion
 }
 
