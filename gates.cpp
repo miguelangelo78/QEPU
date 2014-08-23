@@ -7,7 +7,7 @@
 Gates::Gates(){setup_seed();}
 
 Serial s;
-QEPU::Utils utils;
+Utils utils;
 uint16_t EEMEM randinit;
 
 void print_states(int qb_count,Complex * vec,char* message){
@@ -51,7 +51,6 @@ Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
 			}
 			break;
 		}
-	//print_states(reversed_kron_size,reversed_kronecker,"Reversed kronecker AFTER mul: ");
 	return reversed_kronecker;
 }
 
@@ -89,7 +88,8 @@ Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 	for(int i=0;i<qb_count*2;i+=2){
 		vec[i].re=cos(theta_list[thephi_index]*M_PI/360);												// ALPHA RE (IM=0)
 		vec[i+1].re=sin((theta_list[thephi_index]*M_PI)/360)*cos((phi_list[thephi_index]*M_PI)/180);	// BETA RE
-		vec[i+1].im=sin((theta_list[thephi_index]*M_PI)/360)*sin((phi_list[thephi_index++]*M_PI)/180);  // BETA IM
+		vec[i+1].im=sin((theta_list[thephi_index]*M_PI)/360)*sin((phi_list[thephi_index]*M_PI)/180);  // BETA IM
+		thephi_index++;
 	}
 	print_states(qb_count*2,vec,"Before: ");
 	return kronecker(vec,qb_count,true); // PUT VEC INTO KRONECKER AND RETURN THE RESULT

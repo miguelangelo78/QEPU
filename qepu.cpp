@@ -1,31 +1,45 @@
 #include "qepu.h"
-QEPU::QEPU(){serial.writestr("INITIALIZING . . . ");DDRA=0xFF;program_counter=0;}
+QEPU::QEPU(){serial.writestr("INITIALIZING . . . ");CTRL_QB_DIR=OUTPUT;program_counter=0;}
+
+//QUBIT MEMORY HANDLING:
+void QEPU::bus_write(int8_t data){
+	BUS_DIR=OUTPUT;
+	BUS_OUT=data;
+}
+void QEPU::close_bus(){
+	setctrl(0); // CLOSE ALL CONTROLS
+	deselect_qubit(); // DESELECT ALL QUBITS
+	bus_write(LOW);
+}
 void QEPU::write(int index,int dim,int deg){
-	DDRB=0xFF;
+	BUS_DIR=OUTPUT;
 	
-	setdata(deg);
-	select_qubit(index);//setctrl(index);
-	setctrlpin(4,dim);
-	setctrlpin(6,1); // CLOCK UP LOAD
-	setctrlpin(6,0); // CLOCK DOWN LOAD
-	setdata(0);
+	bus_write(deg);
+	select_qubit(index);
+	setctrlpin(DIM_SEL,dim);
+	setctrlpin(WRITE_QB,HIGH); // CLOCK UP LOAD
+	setctrlpin(WRITE_QB,LOW); // CLOCK DOWN LOAD
+	bus_write(LOW);
 	deselect_qubit();
 }
-int QEPU::read(int index,int dim){
-	DDRB=0x00;
-	select_qubit(index); //setctrl(index);
+int QEPU::read(int index,int dim,bool freeze_bus){
+	BUS_DIR=INPUT;
+	
+	select_qubit(index);
 	//OPEN ALL AND GATES
 	setctrlpin(5,1); // CLOCK UP READ
 	setctrlpin(4,dim);
-	int deg_read=PINB; // READ INPUT
+	int deg_read=BUS_IN; // READ INPUT
 	//CLOSE ALL AND GATES
-	setctrl(0); // CLOSE ALL CONTROLS
-	DDRB=0xFF;
-	deselect_qubit();
+	BUS_DIR=OUTPUT;
+	if(!freeze_bus){
+		setctrl(0); // CLOSE ALL CONTROLS
+		deselect_qubit();
+	}
 	return deg_read;
 }
 void QEPU::deselect_qubit(){
-	DDRC=0xFF;
+	CTRL_BUFF_DIR=OUTPUT;
 	setbuffctrlpin(EO_AB,LOW);
 }
 void QEPU::select_qubit(int index){
@@ -35,8 +49,8 @@ void QEPU::select_qubit(int index){
 		address_buffer[i]=(index&mask_bit_addressbuff)>>(4*i);
 		mask_bit_addressbuff<<=4;
 	}
-	DDRA=0xFF;
-	DDRC=0xFF;
+	CTRL_QB_DIR=OUTPUT;
+	CTRL_BUFF_DIR=OUTPUT;
 	
 	setctrl(address_buffer[0]);
 	setbuffctrlpin(IN_ABBUFFER_START,HIGH);
@@ -54,92 +68,33 @@ void QEPU::select_qubit(int index){
 	setbuffctrlpin(IN_ABBUFFER_CLOCK,LOW);
 	setbuffctrlpin(EO_AB,HIGH);
 }
-void QEPU::setdata(int bin){
-	PORTB=bin;
-}
 void QEPU::setctrl(int bin){
-	PORTA=bin;
+	CTRL_QB=bin;
 }
 void QEPU::setdatapin(int pin,int state){
-	PORTB&=~(1<<pin); // CLEAR PIN
-	PORTB|=(state<<pin); // SET PIN
+	BUS_OUT&=~(1<<pin); // CLEAR PIN
+	BUS_OUT|=(state<<pin); // SET PIN
 }
 void QEPU::setbuffctrlpin(int pin,int state){
-	PORTC&=~(1<<pin); // CLEAR PIN
-	PORTC|=(state<<pin); // SET PIN
+	CTRL_BUFF&=~(1<<pin); // CLEAR PIN
+	CTRL_BUFF|=(state<<pin); // SET PIN
 }
 void QEPU::setctrlpin(int pin,int state){
-	PORTA&=~(1<<pin); // CLEAR PIN
-	PORTA|=(state<<pin); // SET PIN
+	CTRL_QB&=~(1<<pin); // CLEAR PIN
+	CTRL_QB|=(state<<pin); // SET PIN
 }
 void QEPU::dumpmem(){
 	serial.writestrln("");
 	serial.writestrln("** QUANTUM MEMORY DUMP **");
 	for(int i=0;i<QUBIT_COUNT;i++){
-		char * thedim=(char*)malloc(sizeof(char)*3); sprintf(thedim,"%d",read(i,THE));
-		char * phidim=(char*)malloc(sizeof(char)*3); sprintf(phidim,"%d",read(i,PHI));
+		char * thedim=(char*)malloc(sizeof(char)*3); sprintf(thedim,"%d",read(i,THE,false));
+		char * phidim=(char*)malloc(sizeof(char)*3); sprintf(phidim,"%d",read(i,PHI,false));
 		char * qindex=(char*)malloc(sizeof(char));	 sprintf(qindex,"%d",i);
 		serial.writestr("Q"); serial.writestr(qindex); serial.writestr(": Theta - ");
 		serial.writestr(thedim);
 		serial.writestr(" , Phi - ");
 		serial.writestrln(phidim);
 	}
-}
-
-char * QEPU::Utils::int2binstr(int num,int strlength){
-    char * str = (char*)malloc(strlength + 1);
-    if(!str) return NULL;
-    str[strlength] = 0;
-
-    // type punning because signed shift is implementation-defined
-    unsigned u = *(unsigned *)&num;
-    for(; strlength--; u >>= 1)
-    str[strlength] = u & 1 ? '1' : '0';
-
-    return str;
-}
-
-char* QEPU::Utils::char2str(char c){
-	char*str=(char*)malloc(sizeof(char));
-	sprintf(str,"%d",c);
-	return str;
-}
-int*  QEPU::Utils::str2intarr(char* c){
-	int c_length=0;
-	for(int i=0;true;i++) if(c[i]==0xFF && c[i-1]==0xFF && c[i-2]==0xFF && c[i-3]==0xFF && c[i-4]==0xFF) break; else c_length++; c_length-=4;
-	
-	int *intarr=(int*)malloc(sizeof(int)*(c_length+5));
-	for(int i=0;i<c_length;i++) intarr[i]=(int)c[i];
-	for(int i=c_length;i<c_length+5;i++) intarr[i]=0xFF;
-	return intarr;
-}
-int QEPU::Utils::countdigits(int dec){
-	int counter=0;
-	while(dec!=0){
-		dec/=10;
-		++counter;
-	}
-	return counter;
-}
-char* QEPU::Utils::int2str(int dec){
-	char str[10];
-	sprintf(str,"%d",dec);
-	return str;
-}
-int QEPU::Utils::dec2hex(int dec){
-	char str[100];
-	sprintf(str,"%x",dec);
-	return (int)strtol(str,NULL,16);
-}
-int QEPU::Utils::concint(int n1,int n2){
-	char str1[10],str2[10];
-	sprintf(str1,"%d",n1);
-	sprintf(str2,"%d",n2);
-	strcat(str1,str2);
-	return atoi(str1);
-}
-int QEPU::Utils::delay(int ms){
-	while(ms--) _delay_ms(1);
 }
 
 void QEPU::run(){
@@ -184,8 +139,8 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 	switch(func){
 		//DATA MOVEMENT AND PROGRAM CONTROL/FLUX/IO FUNCTIONS:
 		case 0x01: /*MOV*/
-			write(op1,THE,read(op2,THE));
-			write(op1,PHI,read(op2,PHI));
+			write(op1,THE,read(op2,THE,false));
+			write(op1,PHI,read(op2,PHI,false));
 		break;
 		case 0x02: /*JMP(jump)*/ 
 			program_counter=op1-1; 
@@ -225,96 +180,96 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 		//QUANTUM FUNCTIONS:
 		//1 QUBIT GATES -
 		case 0x10: // X GATE
-			newthephi=gates.X(read(op1,THE),read(op1,PHI));
+			newthephi=gates.X(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x11: // Y GATE
-			newthephi=gates.Y(read(op1,THE),read(op1,PHI));
+			newthephi=gates.Y(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x12: // Z GATE
-			newthephi=gates.Z(read(op1,THE),read(op1,PHI));
+			newthephi=gates.Z(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x13: // H GATE
-			newthephi=gates.H(read(op1,THE),read(op1,PHI));
+			newthephi=gates.H(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x14: // S GATE
-			newthephi=gates.S(read(op1,THE),read(op1,PHI));
+			newthephi=gates.S(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		case 0x15: // T GATE
-			newthephi=gates.T(read(op1,THE),read(op1,PHI));
+			newthephi=gates.T(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 		break;
 		//2 QUBIT GATES -
 		case 0x16: 
-			newthephi=gates.CNO(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			newthephi=gates.CNO(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
 		case 0x17:
-			newthephi=gates.CSI(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			newthephi=gates.CSI(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
 		case 0x18: 
-			newthephi=gates.SWA(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			newthephi=gates.SWA(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
 		case 0x19: 
-			newthephi=gates.INC(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			newthephi=gates.INC(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
 		case 0x1A: 
-			newthephi=gates.DEC(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			newthephi=gates.DEC(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
 		case 0x1B:
 			//CSWAP (FREDKIN ) -> 3 QUBIT GATE
-			newthephi=gates.CSW(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI),read(op3,THE),read(op3,PHI));
+			newthephi=gates.CSW(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 		break;
 		case 0x1C: 
 			//TOFFOLI -> 3 QUBIT GATE
-			newthephi=gates.TOF(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI),read(op3,THE),read(op3,PHI));
+			newthephi=gates.TOF(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 		break;
 		case 0x1D: 
 			//DEUTSCH -> 3 QUBIT GATE
-			newthephi=gates.DEU(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI),read(op3,THE),read(op3,PHI),read(0,THE));
+			newthephi=gates.DEU(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false),read(0,THE,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 		break;
 		case 0x1E: 
-			newthephi=gates.SWQ(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			newthephi=gates.SWQ(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
 		case 0x1F: 
-			newthephi=gates.SWI(read(op1,THE),read(op1,PHI),read(op2,THE),read(op2,PHI));
+			newthephi=gates.SWI(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 		break;
 		case 0x20:
-			newthephi=gates.ROX(read(op1,THE),read(op1,PHI),op2);
+			newthephi=gates.ROX(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 		break;
 		case 0x21: 
-			newthephi=gates.ROY(read(op1,THE),read(op1,PHI),op2);
+			newthephi=gates.ROY(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 		break;
 		case 0x22: 
-			newthephi=gates.ROZ(read(op1,THE),read(op1,PHI),op2);
+			newthephi=gates.ROZ(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 		break;
 	}

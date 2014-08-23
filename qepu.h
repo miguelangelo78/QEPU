@@ -1,69 +1,35 @@
 #ifndef QEPU_H_
 #define QEPU_H_
-#define QUBIT_COUNT 4
-#define QUBIT_BYTE_SIZE 4
-#define FIXED_FUNC_OFFSET 0
-#define FIXED_OP1_OFFSET 1
-#define FIXED_OP2_OFFSET 5
-#define FIXED_OP3_OFFSET 9
-#define OP1N2_OFFSET 3
-#define OPERAND_COUNT 3
-#define OP1_WIDTH 4+OP1N2_OFFSET
-#define OP2_WIDTH 4+OP1N2_OFFSET
-#define OP3_WIDTH 4+OP1N2_OFFSET
-#define FUNC_WIDTH 1
-#define INSTR_WIDTH (FUNC_WIDTH+OP1_WIDTH+OP2_WIDTH+OP3_WIDTH)-(OP1N2_OFFSET*OPERAND_COUNT)
-#define INSTR_HEIGHT 20
-#define THE 0
-#define PHI 1
-#define MAX_NEWTHEPHI 6
-#define HIGH 1
-#define LOW 0
-//ADDRESS BUFFER CONSTANTS
-#define ADDRESS_BUFFER_SIZE 3
-#define IN_ABBUFFER_START 2
-#define IN_ABBUFFER_CLOCK 3
-#define EO_AB 4
-#define ADDRESS_WRITE_DELAY 10
-#define F_CPU 14745600
-#include <util/delay.h>
-#include <math.h>
-#include <avr/io.h>
-#include <limits.h>
+
+#include "qepu_constants.h"
 #include "uart.h"
 #include "eeprom.h"
+#include "sram.h"
 #include "gates.h"
+#include "utils.h"
+
 class QEPU{
 	public:
-	class Utils{
-		public:
-			char* char2str(char c);
-			int* str2intarr(char* c);
-			int dec2hex(int dec);
-			char* int2str(int dec);
-			int countdigits(int dec);
-			int concint(int n1,int n2);
-			int delay(int ms);
-			char *int2binstr(int num,int strlength);
-	};
 		QEPU();
 		void run();
 		void write(int index,int dim,int deg);
-		int read(int index,int dim);
+		int read(int index,int dim,bool freeze_bus);
 		void dumpmem();
-		void select_qubit(int index);
-		void deselect_qubit();
 	private:
-		void setdata(int bin);
+		void bus_write(int8_t data);
 		void setctrl(int bin);
 		void setdatapin(int pin,int state);
 		void setctrlpin(int pin,int state);
 		void setbuffctrlpin(int pin,int state);
+		void select_qubit(int index);
+		void deselect_qubit();
+		void close_bus();
 		void execute(int func,int32_t op1,int32_t op2,int32_t op3);
 		EEProm eeprom;
 		Serial serial;
-		Utils utils;
+		SRAM sram;
 		int program_counter;
 		Gates gates;
+		Utils utils;
 };
 #endif

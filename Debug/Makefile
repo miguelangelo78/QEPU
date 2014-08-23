@@ -41,7 +41,9 @@ C_SRCS +=  \
 ../gates.cpp \
 ../qepu.cpp \
 ../QEPU_Project_Atmega32.cpp \
-../uart.cpp
+../sram.cpp \
+../uart.cpp \
+../utils.cpp
 
 
 PREPROCESSING_SRCS += 
@@ -56,7 +58,9 @@ eeprom.o \
 gates.o \
 qepu.o \
 QEPU_Project_Atmega32.o \
-uart.o
+sram.o \
+uart.o \
+utils.o
 
 OBJS_AS_ARGS +=  \
 complex.o \
@@ -64,7 +68,9 @@ eeprom.o \
 gates.o \
 qepu.o \
 QEPU_Project_Atmega32.o \
-uart.o
+sram.o \
+uart.o \
+utils.o
 
 C_DEPS +=  \
 complex.d \
@@ -72,7 +78,9 @@ eeprom.d \
 gates.d \
 qepu.d \
 QEPU_Project_Atmega32.d \
-uart.d
+sram.d \
+uart.d \
+utils.d
 
 C_DEPS_AS_ARGS +=  \
 complex.d \
@@ -80,7 +88,9 @@ eeprom.d \
 gates.d \
 qepu.d \
 QEPU_Project_Atmega32.d \
-uart.d
+sram.d \
+uart.d \
+utils.d
 
 OUTPUT_FILE_PATH +=QEPU_Project_Atmega32.elf
 
@@ -93,6 +103,10 @@ OUTPUT_FILE_DEP:= ./makedep.mk
 LIB_DEP+= 
 
 # AVR32/GNU C Compiler
+
+
+
+
 
 
 

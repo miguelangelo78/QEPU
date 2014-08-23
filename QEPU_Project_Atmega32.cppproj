@@ -142,13 +142,28 @@
     <Compile Include="qepu.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="qepu_constants.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="QEPU_Project_Atmega32.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sram.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sram.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="uart.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="utils.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="utils.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
