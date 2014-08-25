@@ -7,8 +7,6 @@ QEPU - 'Quantum Electronic Processing Unit' Project
 - 
 - STRUCTURE: 1 WORD + 4 WORDS + 4 WORDS + 4 WORDS
 
-->->->->->->->->->->->->->->->->->->->->->
-
 _________________________________________
 
 |   FUNC  |   OP1   |   OP2   |    OP3  |
@@ -18,8 +16,6 @@ _________________________________________
 | 2 BYTES | 4 BYTES | 4 BYTES | 4 BYTES |
 
 -----------------------------------------
-
-->->->->->->->->->->->->->->->->->->->->->
 
 
 ***** GENERAL PURPOSE FUNCTIONS (DATA MOVEMENTPROGRAM CONTROL): **********************************************
@@ -61,7 +57,7 @@ Function: 11: HLT (Halt) 				 -  HLT         | pc=pc_max     (pc_max is the last
 
 ***** QUANTUM FUNCTIONS: **************************************************************************************
 
-1 QUBIT GATES -
+* 1 QUBIT GATES -
 
 Function: 12:  X (PAULI-X GATE)			 - X OP1 		| op1=X(op1)
 
@@ -82,7 +78,7 @@ Function: 19:  ROY (ROTATE Y GATE)		 - ROY OP1 OP2  | op1=ROY(op1,op2) (op2 is a
 Function: 1A:  ROZ (ROTATE Z GATE) 		 - ROZ OP1 OP2  | op1=ROZ(op1,op2) (op2 is an amplitude in degrees)
 
 
-2 QUBIT GATES -
+* 2 QUBIT GATES -
 
 Function: 1B:  CNO (CNOT GATE) 			 - CNO OP1 OP2 	| op1,2=CNO(op1,op2)
 
@@ -99,7 +95,7 @@ Function: 20:  SWQ (SWAGSQ GATE)		 - SWQ OP1 OP2 	| op1,2=SWQ(op1,op2)
 Function: 21:  SWI (SWAPI GATE)			 - SWI OP1 OP2 	| op1,2=SWI(op1,op2)
 
 
-3 QUBIT GATES -
+* 3 QUBIT GATES -
 
 Function: 22:  CSW (CONTROL SWAP GATES)	 - CSW OP1 OP2 OP3	| op1,2,3=CSW(op1,op2,op3)
 
