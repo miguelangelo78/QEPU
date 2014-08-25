@@ -59,3 +59,10 @@ float Utils::custom_pow(float base,int exp){
 	float result=1; for(int i=0;i<exp;i++) result*=base;
 	return result;
 }
+int * Utils::arrint_shiftright(int * arr,int newelem,int array_length){
+	int * new_array=(int*)malloc(sizeof(int)*array_length);
+	int new_array_index=0;
+	new_array[0]=newelem;
+	for(int i=0;i<array_length;i++) new_array[++new_array_index]=arr[i];
+	return new_array;
+}

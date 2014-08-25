@@ -96,12 +96,12 @@ int QEPU::measure(int amplitude){
 }
 
 int QEPU::fetch_register(int address){
-	char data_fetched[BUS_WIDTH]="";
+	char data_fetched[BUS_WIDTH+1]="";
 	int address_offset=address*BUS_WIDTH;
 	for(int i=0;i<BUS_WIDTH;i++)
-		sprintf(data_fetched,"%s%x",data_fetched,measure(read(address_offset+i,THE,false)));
+		sprintf(data_fetched,"%s%d",data_fetched,measure(read(address_offset+i,THE,false)));
 	strrev(data_fetched);
-	return strtol(data_fetched,NULL,2);
+	return strtol(data_fetched,NULL,10);
 }
 
 void QEPU::set_register(int address,int data){
@@ -190,10 +190,11 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 			set_register(op1,op2);
 			break;
 		case 0x07: /*POP (pop)*/
-			//NEEDS MEMORY SYSTEM
+			set_register(op1,sram.pop());
 			break;
 		case 0x08: /*PSH (push)*/
-			//NEEDS MEMORY SYSTEM
+			sram.push(fetch_register(op1));
+			sram.dumpmem(5);
 			break;
 		case 0x09: /*CMT (constantmovtheta)*/
 			write(op1,THE,op2);
@@ -206,7 +207,7 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 			break;
 		/*IMPLEMENT CONDICIONAL BRANCHES HERE*/
 		case 0x0C: /*RET (return)*/
-			//NEEDS ADDRESS FROM 'JUMP' SYSTEM
+			//NEEDS ADDRESS FROM 'JUMP' SYSTEM AND FLAG SYSTEM
 			break;
 		case 0x0D: /*INT (interrupt)*/
 			//NEEDS TABLE SYSTEM

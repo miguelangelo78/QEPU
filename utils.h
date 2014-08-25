@@ -20,5 +20,6 @@ class Utils{
 		int delay(int ms);
 		char *int2binstr(int num,int strlength);
 		float custom_pow(float base,int exp);
+		int * arrint_shiftright(int * arr,int newelem,int array_length);
 };
 #endif
