@@ -1,7 +1,5 @@
-****************************** QEPU *********************************************
-			'Quantum Electronic Processing Unit' Project
-
-
+QEPU PROJECT \n
+'Quantum Electronic Processing Unit' Project
 *************** INSTRUCTION SET: *****************************
 
 ***** INFORMATION: *******************************************
