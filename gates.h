@@ -11,6 +11,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "complex.h"
+#include "utils.h"
 class Gates{
 	public:
 		Gates();
@@ -33,6 +34,7 @@ class Gates{
 		int * CSW(int theta1, int phi1,int theta2,int phi2,int theta3,int phi3);
 		int * TOF(int theta1, int phi1,int theta2,int phi2,int theta3,int phi3);
 		int * DEU(int theta1, int phi1,int theta2,int phi2,int theta3,int phi3,int delta);
+		int touch(double probability);
 	private:
 		Complex* multiply2x2(Complex *q,Complex matrix[2][2]);
 		Complex* multiply4x4(Complex *q,Complex matrix[4][4]);
@@ -41,8 +43,6 @@ class Gates{
 		int * vec2ampl(Complex * vec,int qb_count);
 		Complex * kronecker(Complex * vec,int qb_count,int touch_enable);
 		Complex * reverse_kronecker(Complex * kron,int kron_size);
-		int touch(double probability);
-		void setup_seed();
-		int custom_pow(int base,int exp);
+		Utils utils;
 };
 #endif

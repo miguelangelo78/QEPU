@@ -7,6 +7,7 @@
 #include <inttypes.h>
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/eeprom.h>
 class EEProm{
 	public:
 		EEProm();

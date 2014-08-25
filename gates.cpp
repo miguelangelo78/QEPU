@@ -4,13 +4,12 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <avr/eeprom.h>
-Gates::Gates(){setup_seed();}
+Gates::Gates(){}
 
 Serial s;
-Utils utils;
-uint16_t EEMEM randinit;
 
 void print_states(int qb_count,Complex * vec,char* message){
+	Utils utils;
 	s.writestrln(message);
 	for(int i=0;i<qb_count;i++){
 		s.writestr("R: "); s.writestr(utils.int2str(vec[i].re*1000));
@@ -19,18 +18,8 @@ void print_states(int qb_count,Complex * vec,char* message){
 	}
 }
 
-void Gates::setup_seed(){
-	srand(eeprom_read_word(&randinit));
-	eeprom_write_word(&randinit,rand()%10000);
-}
-
 int Gates::touch(double probability){
 	return RAND_MAX*probability>=rand();
-}
-
-int Gates::custom_pow(int base,int exp){
-	int result=1; for(int i=0;i<exp;i++) result*=base;
-	return result;
 }
 
 Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
@@ -56,7 +45,7 @@ Complex * Gates::reverse_kronecker(Complex * kron,int kron_size){
 
 Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
 	if(qb_count==1) return vec;
-	int kron_size=custom_pow(2,qb_count);
+	int kron_size=utils.custom_pow(2,qb_count);
 	Complex * kronvec=(Complex*)malloc(sizeof(Complex)*kron_size);
 	
 	int vec1i=0;
@@ -95,7 +84,7 @@ Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 	return kronecker(vec,qb_count,true); // PUT VEC INTO KRONECKER AND RETURN THE RESULT
 }
 int * Gates::vec2ampl(Complex * vec,int qb_count){
-	int kron_size=custom_pow(2,qb_count);
+	int kron_size=utils.custom_pow(2,qb_count);
 	if(qb_count>1) vec=reverse_kronecker(vec,kron_size);
 	
 	int* newthephi=(int*)malloc(sizeof(int)*(qb_count*2));

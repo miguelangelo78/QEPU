@@ -19,5 +19,6 @@ class Utils{
 		int concint(int n1,int n2);
 		int delay(int ms);
 		char *int2binstr(int num,int strlength);
+		float custom_pow(float base,int exp);
 };
 #endif

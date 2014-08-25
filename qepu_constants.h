@@ -2,7 +2,7 @@
 #define QEPU_CONSTANTS_H_
 
 //QUBIT MEMORY AND INSTRUCTIONS CONSTANTS
-#define QUBIT_COUNT 4
+#define QUBIT_COUNT 8
 #define QUBIT_BYTE_SIZE 4
 #define FIXED_FUNC_OFFSET 0
 #define FIXED_OP1_OFFSET 1
@@ -46,6 +46,7 @@
 #define IN_ABBUFFER_CLOCK 3
 #define EO_AB 4
 #define ADDRESS_WRITE_DELAY 10
+#define BUS_WIDTH 8
 
 //SRAM CONSTANTS
 #define MWR 5
@@ -56,6 +57,7 @@
 #define OUTPUT 0xFF
 #define HIGH 1
 #define LOW 0
+#define M_PI 3.14159265358979323846
 #define F_CPU 14745600
 
 #endif

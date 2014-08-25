@@ -55,3 +55,7 @@ int Utils::concint(int n1,int n2){
 int Utils::delay(int ms){
 	while(ms--) _delay_ms(1);
 }
+float Utils::custom_pow(float base,int exp){
+	float result=1; for(int i=0;i<exp;i++) result*=base;
+	return result;
+}
