@@ -18,7 +18,7 @@ _________________________________________
 -----------------------------------------
 
 
-***** GENERAL PURPOSE FUNCTIONS (DATA MOVEMENTPROGRAM CONTROL): **********************************************
+***** GENERAL PURPOSE FUNCTIONS (DATA MOVEMENTPROGRAM CONTROL):
 
 Function: 01: MOR (Move Register) 		 -	MOR OP1 OP2 | Qop1=Qop2
 
