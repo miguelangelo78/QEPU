@@ -6,7 +6,11 @@ complex.cpp
 
 eeprom.cpp
 
+flag.cpp
+
 gates.cpp
+
+jumpstack.cpp
 
 qepu.cpp
 

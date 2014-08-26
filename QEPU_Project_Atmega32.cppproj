@@ -130,10 +130,16 @@
     <Compile Include="eeprom.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="flag.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="gates.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="gates.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="jumpstack.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="qepu.cpp">

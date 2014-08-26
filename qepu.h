@@ -10,11 +10,23 @@
 
 class QEPU{
 	public:
+		class Flag{
+			public:
+				Flag();
+				static void compare(int data1,int data2);
+				static int8_t flaglist[FLAG_COUNT];
+		};
+		class Jumpstack{
+			public:
+				Jumpstack();
+			private:
+		}; 
 		QEPU();
 		void run();
 		void write(int index,int dim,int deg);
 		int read(int index,int dim,bool freeze_bus);
-		void dumpmem();
+		void dumpmem(int length);
+		Flag flags;
 	private:
 		void setup_seed();
 		int measure(int amplitude);
@@ -28,6 +40,7 @@ class QEPU{
 		void select_qubit(int index);
 		void deselect_qubit();
 		void close_bus();
+		void set_programcounter(int newaddress);
 		void execute(int func,int32_t op1,int32_t op2,int32_t op3);
 		Serial serial;
 		EEProm eeprom;

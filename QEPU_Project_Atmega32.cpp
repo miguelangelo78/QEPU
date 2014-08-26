@@ -20,6 +20,7 @@ int main(void){
 	sram.push(3);
 	sram.dumpmem(5);
 	*/
+
 	QEPU qepu;
 	qepu.run();
 	while(1);

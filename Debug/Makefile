@@ -38,7 +38,9 @@ SUBDIRS :=
 C_SRCS +=  \
 ../complex.cpp \
 ../eeprom.cpp \
+../flag.cpp \
 ../gates.cpp \
+../jumpstack.cpp \
 ../qepu.cpp \
 ../QEPU_Project_Atmega32.cpp \
 ../sram.cpp \
@@ -55,7 +57,9 @@ ASM_SRCS +=
 OBJS +=  \
 complex.o \
 eeprom.o \
+flag.o \
 gates.o \
+jumpstack.o \
 qepu.o \
 QEPU_Project_Atmega32.o \
 sram.o \
@@ -65,7 +69,9 @@ utils.o
 OBJS_AS_ARGS +=  \
 complex.o \
 eeprom.o \
+flag.o \
 gates.o \
+jumpstack.o \
 qepu.o \
 QEPU_Project_Atmega32.o \
 sram.o \
@@ -75,7 +81,9 @@ utils.o
 C_DEPS +=  \
 complex.d \
 eeprom.d \
+flag.d \
 gates.d \
+jumpstack.d \
 qepu.d \
 QEPU_Project_Atmega32.d \
 sram.d \
@@ -85,7 +93,9 @@ utils.d
 C_DEPS_AS_ARGS +=  \
 complex.d \
 eeprom.d \
+flag.d \
 gates.d \
+jumpstack.d \
 qepu.d \
 QEPU_Project_Atmega32.d \
 sram.d \
@@ -103,6 +113,10 @@ OUTPUT_FILE_DEP:= ./makedep.mk
 LIB_DEP+= 
 
 # AVR32/GNU C Compiler
+
+
+
+
 
 
 
