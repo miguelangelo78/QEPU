@@ -44,6 +44,8 @@ int QEPU::read(int index,int dim,bool freeze_bus){
 		setctrl(0); // CLOSE ALL CONTROLS
 		deselect_qubit();
 	}
+	//TODO: TOUCH QUBIT
+	
 	return deg_read;
 }
 void QEPU::deselect_qubit(){
@@ -174,66 +176,70 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 	//TODO: MAKE A SWITCH ON THE FUNCTION
 	switch(func){
 		//DATA MOVEMENT AND PROGRAM CONTROL/FLUX/IO FUNCTIONS:
-		case 0x01: /*MOR (move register) */
+		case 0x01: /*MOQ (move qubit) */
 			write(op1,THE,read(op2,THE,false));
 			write(op1,PHI,read(op2,PHI,false));
 			break;
-		case 0x02: /*MOM (move memory)*/
+		case 0x02: /*MOR (move register)*/
+			set_register(op1,fetch_register(op1)); // TOUCH ITSELF 1ST
+			set_register(op1,fetch_register(op2)); // MOVE TO THE NEW REGISTER (IF IT NEEDS TO BE UNTOUCHED IT NEEDS TO USE MATRICES INSTEAD)
+			break;
+		case 0x03: /*MOM (move memory)*/
 			sram.write(op1,sram.read(op2));
 			break;
-		case 0x03: /*STR (store)*/
+		case 0x04: /*STR (store)*/
 			sram.write(op1,fetch_register(op2));
 			break;
-		case 0x04: /*LOD (load)*/
+		case 0x05: /*LOD (load)*/
 			set_register(op1,sram.read(op2));
 			break;
-		case 0x05: /*CRW (Constant Ram Write)*/
+		case 0x06: /*CRW (Constant Ram Write)*/
 			sram.write(op1,op2);
 			break;
-		case 0x06: /*CQW* (Constant Qubit Write)*/
+		case 0x07: /*CQW* (Constant Qubit Write)*/
 			set_register(op1,op2);
 			break;
-		case 0x07: /*POP (pop)*/
+		case 0x08: /*POP (pop)*/
 			set_register(op1,sram.pop());
 			break;
-		case 0x08: /*PSH (push)*/
+		case 0x09: /*PSH (push)*/
 			sram.push(fetch_register(op1));
 			break;
-		case 0x09: /*CMT (constantmovtheta)*/
+		case 0x0A: /*CMT (constantmovtheta)*/
 			write(op1,THE,op2);
 			break;
-		case 0x0A: /*CMP (constantmovphi)*/
+		case 0x0B: /*CMP (constantmovphi)*/
 			write(op1,PHI,op2);
 			break;
-		case 0x0B: /*CME (compare)*/
+		case 0x0C: /*CME (compare)*/
 			flags.compare(fetch_register(op1),fetch_register(op2));
 			break;
 		/*IMPLEMENT CONDICIONAL/INCONDICIONAL BRANCHES HERE*/
-		case 0x0C: /*BLW (branch if lower (with jumpstack))*/
+		case 0x0D: /*BLW (branch if lower (with jumpstack))*/
 			if(flags.flaglist[CND_LWER]){
 				jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x0D: /*BLE (branch if lower or equal (with jumpstack))*/
+		case 0x0E: /*BLE (branch if lower or equal (with jumpstack))*/
 			if(flags.flaglist[CND_LWER_EQUAL]){
 				jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x0E: /*BEQ (branch if equal) (with jumpstack)*/
+		case 0x0F: /*BEQ (branch if equal) (with jumpstack)*/
 			if(flags.flaglist[CND_EQUAL]){
 				jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x0F: /*BGE (branch if greater or equal (with jumpstack))*/
+		case 0x10: /*BGE (branch if greater or equal (with jumpstack))*/
 			if(flags.flaglist[CND_GRTER_EQUAL]){
 				jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x10: /*BGR (branch if greater (with jumpstack))*/
+		case 0x11: /*BGR (branch if greater (with jumpstack))*/
 			if(flags.flaglist[CND_GRTER]){
 				jumpstack.push(program_counter+1);
 				set_programcounter(op1);
@@ -261,15 +267,15 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 			jumpstack.push(program_counter+1);
 			set_programcounter(op1);
 			break;
-		case 0x16: /*JMP (jump (incondicional branch WITHOUT jumpstack))*/
-			set_programcounter(op1);
-		break;
-		
-		/*IMPLEMENT LOGIC AND ARITHMETIC (CLASSICAL) CALCULATIONS*/
-		
-		case 0x17: /*RET (return)*/
+		case 0x16: /*RET (return)*/
 			set_programcounter(jumpstack.pop());
 			break;
+		case 0x17: /*JMP (jump (incondicional branch WITHOUT jumpstack))*/
+			set_programcounter(op1);
+			break;
+			
+		/*IMPLEMENT LOGIC AND ARITHMETIC (CLASSICAL) CALCULATIONS HERE*/
+		
 		case 0x18: /*INT (interrupt)*/
 			//NEEDS TABLE SYSTEM
 			break;
@@ -378,7 +384,7 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 			break;
 	}
 	
-	if(false){
+	if(true){
 		serial.writestr("Function: "); serial.writestr(utils.int2str(func));
 		serial.writestr(" , OP1: ");   serial.writestr(utils.int2str(op1));
 		serial.writestr(" , OP2: ");   serial.writestr(utils.int2str(op2));
