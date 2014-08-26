@@ -209,42 +209,69 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 			flags.compare(fetch_register(op1),fetch_register(op2));
 			break;
 		/*IMPLEMENT CONDICIONAL/INCONDICIONAL BRANCHES HERE*/
-		case 0x0C: /*BLW (branch if lower)*/
-			if(flags.flaglist[CND_LWER])set_programcounter(op1);
+		case 0x0C: /*BLW (branch if lower (with jumpstack))*/
+			if(flags.flaglist[CND_LWER]){
+				jumpstack.push(program_counter+1);
+				set_programcounter(op1);
+			}
 			break;
-		case 0x0D: /*BLE (branch if lower or equal)*/
-			if(flags.flaglist[CND_LWER_EQUAL])set_programcounter(op1);
+		case 0x0D: /*BLE (branch if lower or equal (with jumpstack))*/
+			if(flags.flaglist[CND_LWER_EQUAL]){
+				jumpstack.push(program_counter+1);
+				set_programcounter(op1);
+			}
 			break;
-		case 0x0E: /*BEQ (branch if equal)*/
-			if(flags.flaglist[CND_EQUAL])set_programcounter(op1);
+		case 0x0E: /*BEQ (branch if equal) (with jumpstack)*/
+			if(flags.flaglist[CND_EQUAL]){
+				jumpstack.push(program_counter+1);
+				set_programcounter(op1);
+			}
 			break;
-		case 0x0F: /*BGE (branch if greater or equal)*/
-			if(flags.flaglist[CND_GRTER_EQUAL])set_programcounter(op1);
+		case 0x0F: /*BGE (branch if greater or equal (with jumpstack))*/
+			if(flags.flaglist[CND_GRTER_EQUAL]){
+				jumpstack.push(program_counter+1);
+				set_programcounter(op1);
+			}
 			break;
-		case 0x10: /*BGR (branch if greater)*/
-			if(flags.flaglist[CND_GRTER])set_programcounter(op1);
+		case 0x10: /*BGR (branch if greater (with jumpstack))*/
+			if(flags.flaglist[CND_GRTER]){
+				jumpstack.push(program_counter+1);
+				set_programcounter(op1);
+			}
 			break;
-		case 0x12: /*BDI (branch if different)*/
-			if(flags.flaglist[CND_DIFF])set_programcounter(op1);
+		case 0x12: /*BDI (branch if different (with jumpstack))*/
+			if(flags.flaglist[CND_DIFF]){
+				jumpstack.push(program_counter+1);
+				set_programcounter(op1);
+			}
 			break;
-		case 0x13: /*BZE (branch if register(op1)=0 (zero))*/
-			if(flags.flaglist[CND_ZERO])set_programcounter(op1);
+		case 0x13: /*BZE (branch if register(op1)=0 (zero) (with jumpstack))*/
+			if(flags.flaglist[CND_ZERO]){
+				jumpstack.push(program_counter+1);
+				set_programcounter(op1);
+			}
 			break;
-		case 0x14: /*BNZ (branch if register(op1)!=0 (not zero))*/
-			if(flags.flaglist[CND_NOT_ZERO])set_programcounter(op1);
+		case 0x14: /*BNZ (branch if register(op1)!=0 (not zero) (with jumpstack))*/
+			if(flags.flaglist[CND_NOT_ZERO]){
+				jumpstack.push(program_counter+1);
+				set_programcounter(op1);
+			}
 			break;
-		case 0x15: /*CALL*/
-			//NEEDS JUMP STACK SYSTEM
-			break;
-		/*IMPLEMENT LOGIC AND ARITHMETIC (CLASSICAL) CALCULATIONS*/
-		case 0x16: /*RET (return)*/
-			//NEEDS ADDRESS FROM 'CALL' SYSTEM (JUMP STACK SYSTEM)
-			break;
-		case 0x17: /*INT (interrupt)*/
-			//NEEDS TABLE SYSTEM
-			break;
-		case 0x18: /*JMP (jump)*/ 
+		case 0x15: /*CALL (incondicional branch WITH jumpstack)*/
+			jumpstack.push(program_counter+1);
 			set_programcounter(op1);
+			break;
+		case 0x16: /*JMP (jump (incondicional branch WITHOUT jumpstack))*/
+			set_programcounter(op1);
+		break;
+		
+		/*IMPLEMENT LOGIC AND ARITHMETIC (CLASSICAL) CALCULATIONS*/
+		
+		case 0x17: /*RET (return)*/
+			set_programcounter(jumpstack.pop());
+			break;
+		case 0x18: /*INT (interrupt)*/
+			//NEEDS TABLE SYSTEM
 			break;
 		case 0x19: /*DLY (delay)*/
 			utils.delay(op1);

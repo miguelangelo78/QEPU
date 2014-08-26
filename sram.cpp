@@ -44,8 +44,8 @@ int SRAM::pop(){
 	memory_management();
 	int popped_number=read(0);
 	stack_head_offset++;
-	if(stack_head_offset>stack_tail_offset) stack_head_offset=stack_tail_offset;
-	return popped_number;
+	if(stack_head_offset>stack_tail_offset) return 0;
+	else return popped_number;
 }
 void SRAM::push(int register_data){
 	memory_management();

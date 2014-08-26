@@ -22,6 +22,6 @@ int main(void){
 	*/
 
 	QEPU qepu;
-	qepu.run();
+	qepu.run();	
 	while(1);
 }

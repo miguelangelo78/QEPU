@@ -19,7 +19,12 @@ class QEPU{
 		class Jumpstack{
 			public:
 				Jumpstack();
+				void push(int newaddress);
+				int pop();
+				void dumpjumpstack(); // TEMPORARY
 			private:
+				int newest_address_index;
+				int addresses_toreturn[JUMP_STACK_SIZE];
 		}; 
 		QEPU();
 		void run();
@@ -46,6 +51,7 @@ class QEPU{
 		EEProm eeprom;
 		SRAM sram;
 		Gates gates;
+		Jumpstack jumpstack;
 		Utils utils;
 		int program_counter;
 		int program_counter_maximum;
