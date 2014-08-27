@@ -60,7 +60,7 @@
 #define TAIL_PROGRAMMER_OFFSET 0
 
 //FLAG CONSTANTS:
-#define FLAG_COUNT 8
+#define FLAG_COUNT 9
 #define CND_LWER 0
 #define CND_LWER_EQUAL 1
 #define CND_EQUAL 2
@@ -69,6 +69,7 @@
 #define CND_DIFF 5
 #define CND_ZERO 6
 #define CND_NOT_ZERO 7
+#define ALLOW_BRANCH_STACK 8
 
 //JUMP STACK CONSTANTS:
 #define JUMP_STACK_SIZE 100

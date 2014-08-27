@@ -40,6 +40,7 @@ C_SRCS +=  \
 ../eeprom.cpp \
 ../flag.cpp \
 ../gates.cpp \
+../interrupts.cpp \
 ../jumpstack.cpp \
 ../qepu.cpp \
 ../QEPU_Project_Atmega32.cpp \
@@ -59,6 +60,7 @@ complex.o \
 eeprom.o \
 flag.o \
 gates.o \
+interrupts.o \
 jumpstack.o \
 qepu.o \
 QEPU_Project_Atmega32.o \
@@ -71,6 +73,7 @@ complex.o \
 eeprom.o \
 flag.o \
 gates.o \
+interrupts.o \
 jumpstack.o \
 qepu.o \
 QEPU_Project_Atmega32.o \
@@ -83,6 +86,7 @@ complex.d \
 eeprom.d \
 flag.d \
 gates.d \
+interrupts.d \
 jumpstack.d \
 qepu.d \
 QEPU_Project_Atmega32.d \
@@ -95,6 +99,7 @@ complex.d \
 eeprom.d \
 flag.d \
 gates.d \
+interrupts.d \
 jumpstack.d \
 qepu.d \
 QEPU_Project_Atmega32.d \
@@ -113,6 +118,8 @@ OUTPUT_FILE_DEP:= ./makedep.mk
 LIB_DEP+= 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

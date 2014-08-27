@@ -25,7 +25,7 @@ class QEPU{
 			private:
 				int newest_address_index;
 				int addresses_toreturn[JUMP_STACK_SIZE];
-		}; 
+		};
 		QEPU();
 		void run();
 		void write(int index,int dim,int deg);
@@ -33,6 +33,7 @@ class QEPU{
 		void dumpmem(int length);
 		Flag flags;
 	private:
+		void interrupt_cpu(int interrupt_type);	
 		void setup_seed();
 		int measure(int amplitude);
 		void bus_write(int8_t data);

@@ -1,8 +1,10 @@
 #include "qepu.h"
 
-QEPU::Flag::Flag(){}
-
 int8_t QEPU::Flag::flaglist[FLAG_COUNT];
+
+QEPU::Flag::Flag(){
+	flaglist[ALLOW_BRANCH_STACK]=HIGH;	
+}
 
 void QEPU::Flag::compare(int data1,int data2){
 	flaglist[CND_LWER]=(data1<data2)?HIGH:LOW;

@@ -10,6 +10,8 @@ flag.cpp
 
 gates.cpp
 
+interrupts.cpp
+
 jumpstack.cpp
 
 qepu.cpp

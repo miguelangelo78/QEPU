@@ -167,6 +167,8 @@ void QEPU::run(){
 		execute(func,strtol(op1s,NULL,16),strtol(op2s,NULL,16),strtol(op3s,NULL,16)); //*INSTRUCTION DECODE AND EXECUTE*/
 	}
 	dumpmem(QUBIT_COUNT);
+	serial.writestrln("");
+	sram.dumpmem(5);
 	serial.writestr("The execution of the program has finished");
 	#pragma endregion
 }
@@ -214,167 +216,217 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 		case 0x0C: /*CME (compare)*/
 			flags.compare(fetch_register(op1),fetch_register(op2));
 			break;
+		case 0x0D: /*SEF (SET FLAG)*/
+			flags.flaglist[op1]=op2;
+			break;
+		case 0x0E: /*GEF (GET FLAG)*/
+			sram.write(op1,flags.flaglist[op2]);
+			break;
 		/*IMPLEMENT CONDICIONAL/INCONDICIONAL BRANCHES HERE*/
-		case 0x0D: /*BLW (branch if lower (with jumpstack))*/
+		case 0x0F: /*BES (branch enable stack)*/
+			flags.flaglist[ALLOW_BRANCH_STACK]=op1;
+			break;
+		case 0x10: /*BLW (branch if lower (with jumpstack))*/
 			if(flags.flaglist[CND_LWER]){
 				jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x0E: /*BLE (branch if lower or equal (with jumpstack))*/
+		case 0x11: /*BLE (branch if lower or equal (with jumpstack))*/
 			if(flags.flaglist[CND_LWER_EQUAL]){
-				jumpstack.push(program_counter+1);
+				if(flags.flaglist[ALLOW_BRANCH_STACK])
+					jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x0F: /*BEQ (branch if equal) (with jumpstack)*/
+		case 0x12: /*BEQ (branch if equal) (with jumpstack)*/
 			if(flags.flaglist[CND_EQUAL]){
-				jumpstack.push(program_counter+1);
+				if(flags.flaglist[ALLOW_BRANCH_STACK])
+					jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x10: /*BGE (branch if greater or equal (with jumpstack))*/
+		case 0x13: /*BGE (branch if greater or equal (with jumpstack))*/
 			if(flags.flaglist[CND_GRTER_EQUAL]){
-				jumpstack.push(program_counter+1);
+				if(flags.flaglist[ALLOW_BRANCH_STACK])
+					jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x11: /*BGR (branch if greater (with jumpstack))*/
+		case 0x14: /*BGR (branch if greater (with jumpstack))*/
 			if(flags.flaglist[CND_GRTER]){
-				jumpstack.push(program_counter+1);
+				if(flags.flaglist[ALLOW_BRANCH_STACK])
+					jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x12: /*BDI (branch if different (with jumpstack))*/
+		case 0x15: /*BDI (branch if different (with jumpstack))*/
 			if(flags.flaglist[CND_DIFF]){
-				jumpstack.push(program_counter+1);
+				if(flags.flaglist[ALLOW_BRANCH_STACK])
+					jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x13: /*BZE (branch if register(op1)=0 (zero) (with jumpstack))*/
+		case 0x16: /*BZE (branch if register(op1)=0 (zero) (with jumpstack))*/
 			if(flags.flaglist[CND_ZERO]){
-				jumpstack.push(program_counter+1);
+				if(flags.flaglist[ALLOW_BRANCH_STACK])
+					jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x14: /*BNZ (branch if register(op1)!=0 (not zero) (with jumpstack))*/
+		case 0x17: /*BNZ (branch if register(op1)!=0 (not zero) (with jumpstack))*/
 			if(flags.flaglist[CND_NOT_ZERO]){
-				jumpstack.push(program_counter+1);
+				if(flags.flaglist[ALLOW_BRANCH_STACK])
+					jumpstack.push(program_counter+1);
 				set_programcounter(op1);
 			}
 			break;
-		case 0x15: /*CALL (incondicional branch WITH jumpstack)*/
+		case 0x18: /*CALL (incondicional branch WITH jumpstack)*/
 			jumpstack.push(program_counter+1);
 			set_programcounter(op1);
 			break;
-		case 0x16: /*RET (return)*/
+		case 0x19: /*RET (return)*/
 			set_programcounter(jumpstack.pop());
 			break;
-		case 0x17: /*JMP (jump (incondicional branch WITHOUT jumpstack))*/
+		case 0x1A: /*JMP (jump (incondicional branch WITHOUT jumpstack))*/
 			set_programcounter(op1);
 			break;
-			
 		/*IMPLEMENT LOGIC AND ARITHMETIC (CLASSICAL) CALCULATIONS HERE*/
-		
-		case 0x18: /*INT (interrupt)*/
-			//NEEDS TABLE SYSTEM
+		case 0x1B: /*ADD*/
+			sram.write(op1,sram.read(op2)+sram.read(op3));
 			break;
-		case 0x19: /*DLY (delay)*/
+		case 0x1C: /*SUB*/
+			sram.write(op1,sram.read(op2)-sram.read(op3));
+			break;
+		case 0x1D: /*MUL*/
+			sram.write(op1,sram.read(op2)*sram.read(op3));
+			break;
+		case 0x1E: /*DIV*/
+			sram.write(op1,sram.read(op2)/sram.read(op3));
+			break;
+		case 0x1F: /*AND*/
+			sram.write(op1,sram.read(op2)&sram.read(op3));
+			break;
+		case 0x20: /*OR*/
+			sram.write(op1,sram.read(op2)|sram.read(op3));
+			break;
+		case 0x21: /*NOR*/
+			sram.write(op1,~(sram.read(op2)|sram.read(op3)));
+			break;
+		case 0x22: /*XOR*/
+			sram.write(op1,sram.read(op2)^sram.read(op3));
+			break;
+		case 0x23: /*NAN*/
+			sram.write(op1,~(sram.read(op2)&sram.read(op3)));
+			break;
+		case 0x24: /*NOT*/
+			sram.write(op1,~sram.read(op2));
+			break;
+		case 0x25: /*SHL*/
+			sram.write(op1,sram.read(op2)<<op3);
+			break;
+		case 0x26: /*SHR*/
+			sram.write(op1,sram.read(op2)>>op3);
+			break;
+		case 0x27: /*INT (interrupt)*/ //NEEDS TABLE SYSTEM
+			interrupt_cpu(op1);
+			break;
+		case 0x28: /*DLY (delay)*/
 			utils.delay(op1);
 			break;
-		case 0x1A: /*NOP (nop) - DOES NOTHING*/ 
+		case 0x29: /*NOP (nop) - DOES NOTHING*/ 
 			break;
-		case 0x1B: /*HLT (halt)*/ 
+		case 0x2A: /*HLT (halt)*/ 
 			program_counter=program_counter_maximum;
 			break;
 		//QUANTUM FUNCTIONS:
 		//1 QUBIT GATES -
-		case 0x1C: // X GATE
+		case 0x2B: // X GATE
 			newthephi=gates.X(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x1D: // Y GATE
+		case 0x2C: // Y GATE
 			newthephi=gates.Y(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x1E: // Z GATE
+		case 0x2D: // Z GATE
 			newthephi=gates.Z(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x1F: // H GATE
+		case 0x2E: // H GATE
 			newthephi=gates.H(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x20: // S GATE
+		case 0x2F: // S GATE
 			newthephi=gates.S(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x21: // T GATE
+		case 0x30: // T GATE
 			newthephi=gates.T(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x22: // ROTATE X GATE
+		case 0x31: // ROTATE X GATE
 			newthephi=gates.ROX(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			break;
-		case 0x23: // ROTATE Y GATE
+		case 0x32: // ROTATE Y GATE
 			newthephi=gates.ROY(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			break;
-		case 0x24: // ROTATE Z GATE
+		case 0x33: // ROTATE Z GATE
 			newthephi=gates.ROZ(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			break;
 		//2 QUBIT GATES -
-		case 0x25: // CNOT GATE
+		case 0x34: // CNOT GATE
 			newthephi=gates.CNO(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x26: // CSIGN GATE
+		case 0x35: // CSIGN GATE
 			newthephi=gates.CSI(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x27: // SWAP GATE
+		case 0x36: // SWAP GATE
 			newthephi=gates.SWA(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x28: // INCREMENT GATE
+		case 0x37: // INCREMENT GATE
 			newthephi=gates.INC(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x29: // DECREMENT GATE
+		case 0x38: // DECREMENT GATE
 			newthephi=gates.DEC(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x2A: // SWAGSQ GATE
+		case 0x39: // SWAGSQ GATE
 			newthephi=gates.SWQ(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x2B: // SWAPI GATE
+		case 0x3A: // SWAPI GATE
 			newthephi=gates.SWI(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
 		//3 QUBIT GATES -
-		case 0x2C: // CONTROL SWAP GATE
+		case 0x3B: // CONTROL SWAP GATE
 			newthephi=gates.CSW(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 			break;
-		case 0x2D: // TOFFOLI GATE
+		case 0x3C: // TOFFOLI GATE
 			newthephi=gates.TOF(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 			break;
-		case 0x2E: // DEUTSCH GATE
+		case 0x3D: // DEUTSCH GATE
 			newthephi=gates.DEU(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false),read(0,THE,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
