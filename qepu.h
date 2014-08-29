@@ -33,7 +33,8 @@ class QEPU{
 		void dumpmem(int length);
 		Flag flags;
 	private:
-		void interrupt_cpu(int interrupt_type);	
+		void interrupt_cpu(int interrupt_type);
+		void interrupt_done();
 		void setup_seed();
 		int measure(int amplitude);
 		void bus_write(int8_t data);
@@ -56,5 +57,6 @@ class QEPU{
 		Utils utils;
 		int program_counter;
 		int program_counter_maximum;
+		bool interrupt_signal;
 };
 #endif

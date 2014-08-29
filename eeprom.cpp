@@ -5,8 +5,7 @@ EEProm::EEProm(){
 	TWBR = 5;
 	TWSR &= (~((1<<TWPS1)|(1<<TWPS0)));
 }
-uint8_t EEProm::write(uint16_t address,uint8_t data)
-{
+uint8_t EEProm::write(uint16_t address,uint8_t data){
 	do
 	{
 		//Put Start Condition on TWI Bus
@@ -192,9 +191,37 @@ uint8_t EEProm::read(uint16_t address){
 char* EEProm::readall(){
 	char eeprom_mem[MAX_MEM_SIZE];
 	
-	for(int i=0;MAX_MEM_SIZE;i++) {
+	for(int i=0;i<MAX_MEM_SIZE;i++) {
 		eeprom_mem[i]=read(i);
 		if(eeprom_mem[i]==0xFF && eeprom_mem[i-1]==0xFF && eeprom_mem[i-2]==0xFF && eeprom_mem[i-3]==0xFF && eeprom_mem[i-4]==0xFF) break;
 	}
 	return eeprom_mem;
+}
+
+int EEProm::count_lines(){
+	int tdb[INSTR_WIDTH+1];
+	int tdb_i=0,ctr=0;
+	bool all_data_read=false;
+	
+	for(int i=0;true;i++){
+		tdb[tdb_i]=read(i);
+		
+		if(tdb_i>=INSTR_WIDTH){
+			ctr++;
+			for(int j=0;j<INSTR_WIDTH;j++){
+				if(tdb[j]==0xFF) all_data_read=true;
+				else all_data_read=false;
+			}
+			tdb_i=0;
+			if(all_data_read) return ctr;
+		}else tdb_i++;
+	}
+	return ctr;
+}
+
+int * EEProm::get_line(int line){
+	int line_to_fetch[INSTR_WIDTH];
+	int line_width=INSTR_WIDTH;
+	for(int cell=0;cell<INSTR_WIDTH;cell++)	line_to_fetch[cell]=read(cell+(line*line_width));
+	return line_to_fetch;
 }

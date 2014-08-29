@@ -1,18 +1,24 @@
 #include "sram.h"
 
 SRAM::SRAM(){
+	init();
+}
+void SRAM::init(){
 	CTRLMEM_DIR=OUTPUT;
 	stack_head_offset=MEMORY_HEAD_PERMISSION_OFFSET+HEAD_PROGRAMMER_OFFSET;
 	stack_tail_offset=ADDRESS_MAX-MEMORY_TAIL_PERMISSION_OFFSET-TAIL_PROGRAMMER_OFFSET;
+	memory_restrictedaccess_allowed=false;
 }
 
 void SRAM::set_address(int address){
 	MEM_ADDRESS_DIR=OUTPUT;
-	if(address+stack_head_offset>stack_tail_offset) MEM_ADDRESS=stack_tail_offset;
-	else MEM_ADDRESS=address+stack_head_offset;
+	if(!memory_restrictedaccess_allowed)
+		if(address+stack_head_offset>stack_tail_offset)MEM_ADDRESS=stack_tail_offset;
+		else MEM_ADDRESS=address+stack_head_offset;
+	else MEM_ADDRESS=address;
 }
 
-int8_t SRAM::read(int8_t address){
+int8_t SRAM::read(int address){
 	memory_management();
 	set_address(address);
 	BUS_DIR=INPUT;
@@ -23,7 +29,7 @@ int8_t SRAM::read(int8_t address){
 	MEM_ADDRESS=LOW;
 	return bus_data;
 }
-void SRAM::write(int8_t address,int8_t data){
+void SRAM::write(int address,int data){
 	memory_management();
 	set_address(address);
 	bus_write(data);
@@ -32,7 +38,7 @@ void SRAM::write(int8_t address,int8_t data){
 	MEM_ADDRESS=LOW;
 	bus_write(LOW);
 }
-void SRAM::bus_write(int8_t data){
+void SRAM::bus_write(int data){
 	BUS_DIR=OUTPUT;
 	BUS_OUT=data;
 }
@@ -67,7 +73,7 @@ void SRAM::dumpmem(int length){
 	int head=0,tail=length;
 	if(length<=0){head=stack_head_offset; tail=stack_tail_offset;}
 	for(int i=0;i<tail+head;i++){
-		char mem_debug_str[30];
+		char mem_debug_str[40];
 		sprintf(mem_debug_str,"Address: %d (Off: %d) Data: %d",i,i+stack_head_offset,read(i));
 		serial.writestrln(mem_debug_str);
 	}
@@ -75,8 +81,10 @@ void SRAM::dumpmem(int length){
 
 void SRAM::memory_management(){
 	if(stack_head_offset>stack_tail_offset || stack_head_offset<0 || stack_head_offset>ADDRESS_MAX || stack_tail_offset<0 || stack_tail_offset>ADDRESS_MAX){
-		//RESTORE STACK POINTERS TO DEFAULT
-		stack_head_offset=MEMORY_HEAD_PERMISSION_OFFSET+HEAD_PROGRAMMER_OFFSET;
-		stack_tail_offset=ADDRESS_MAX-MEMORY_TAIL_PERMISSION_OFFSET-TAIL_PROGRAMMER_OFFSET;
+		init(); //RESTORE STACK POINTERS TO DEFAULT
 	}
+}
+
+void SRAM::permissions(bool allowed){
+	memory_restrictedaccess_allowed=allowed;
 }

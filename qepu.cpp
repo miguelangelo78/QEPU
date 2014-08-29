@@ -138,33 +138,20 @@ void QEPU::run(){
 	//TEMPORARY PRINTING FOR DEBUGGING PURPOSES
 	serial.writestrln(" RUNNING "); serial.writestrln("");
 	
-	/*EEPROM FETCH*/
-	#pragma region EEPROM_FETCH
-	int * eeprom_mem=utils.str2intarr(eeprom.readall()); //TODO: READ ALL EEPROM
-	int eeprom_mem_length=0;
-	for(int i=0;true;i++) if(eeprom_mem[i]==0xFF && eeprom_mem[i-1]==0xFF && eeprom_mem[i-2]==0xFF && eeprom_mem[i-3]==0xFF && eeprom_mem[i-4]==0xFF) break; else eeprom_mem_length++; eeprom_mem_length-=4;
-	//TODO: PUT ALL LINES FROM EEPROM INTO AN ARRAY OF INSTRUCTIONS
-	int eeprom_splitted[INSTR_HEIGHT][INSTR_WIDTH];
-	int line=0,eeprom_splittedx=0;
-	for(int i=0;i<eeprom_mem_length;i++){
-		if(eeprom_splittedx>=INSTR_WIDTH) {line++;eeprom_splittedx=0;} 
-		eeprom_splitted[line][eeprom_splittedx++]=eeprom_mem[i];
-	}
-	#pragma endregion
-	/*INSTRUCTION FETCH*/
-	#pragma region INSTRUCTION_FETCH
-	//TODO: EXECUTE INSTRUCTIONS INSIDE THE ARRAY OF INSTRUCTIONS:
-	program_counter_maximum=line;
-	for(program_counter=0;program_counter<program_counter_maximum;program_counter++){
-		int func=0;	char op1s[OP1_WIDTH]=""; char op2s[OP2_WIDTH]=""; char op3s[OP3_WIDTH]="";	
-		//FIXED WIDTH INSTRUCTION:
-		func=eeprom_splitted[program_counter][FIXED_FUNC_OFFSET]; // FUNCTION FETCH
+	int line_width=INSTR_WIDTH;
+	program_counter_maximum=eeprom.count_lines();
+	for(int program_counter=0;program_counter<program_counter_maximum;program_counter++){
+		//FETCH OPERANDS FROM THE EEPROM:
+		int eeprom_line_selection=program_counter*line_width;
+		int func=0;	char op1s[OP1_WIDTH]=""; char op2s[OP2_WIDTH]=""; char op3s[OP3_WIDTH]="";
+		func=eeprom.read(eeprom_line_selection+FIXED_FUNC_OFFSET); // FUNCTION FETCH
 		for(int k=0;k<QUBIT_BYTE_SIZE;k++){
-			sprintf(op1s,"%s%x",op1s,eeprom_splitted[program_counter][k+FIXED_OP1_OFFSET]); // HEX CONCAT TO STRING (OP1 FETCH)
-			sprintf(op2s,"%s%x",op2s,eeprom_splitted[program_counter][k+FIXED_OP2_OFFSET]); // HEX CONCAT TO STRING (OP2 FETCH)
-			sprintf(op3s,"%s%x",op3s,eeprom_splitted[program_counter][k+FIXED_OP3_OFFSET]); // HEX CONCAT TO STRING (OP3 FETCH)
+			sprintf(op1s,"%s%x",op1s,eeprom.read(eeprom_line_selection+FIXED_OP1_OFFSET+k)); // HEX CONCAT TO STRING (OP1 FETCH)
+			sprintf(op2s,"%s%x",op2s,eeprom.read(eeprom_line_selection+FIXED_OP2_OFFSET+k)); // HEX CONCAT TO STRING (OP2 FETCH)
+			sprintf(op3s,"%s%x",op3s,eeprom.read(eeprom_line_selection+FIXED_OP3_OFFSET+k)); // HEX CONCAT TO STRING (OP3 FETCH)
 		}
-		execute(func,strtol(op1s,NULL,16),strtol(op2s,NULL,16),strtol(op3s,NULL,16)); //*INSTRUCTION DECODE AND EXECUTE*/
+		//EXECUTE:
+		execute(func,strtol(op1s,NULL,16),strtol(op2s,NULL,16),strtol(op3s,NULL,16)); //INSTRUCTION DECODE AND EXECUTE
 	}
 	dumpmem(QUBIT_COUNT);
 	serial.writestrln("");
@@ -436,7 +423,7 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 			break;
 	}
 	
-	if(true){
+	if(false){
 		serial.writestr("Function: "); serial.writestr(utils.int2str(func));
 		serial.writestr(" , OP1: ");   serial.writestr(utils.int2str(op1));
 		serial.writestr(" , OP2: ");   serial.writestr(utils.int2str(op2));

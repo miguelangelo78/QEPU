@@ -9,21 +9,24 @@
 class SRAM{
 	public: 
 		SRAM();
-		int8_t read(int8_t address);
-		void write(int8_t address,int8_t data);
+		int8_t read(int address);
+		void write(int address,int data);
 		int pop();
 		void push(int register_data);
+		void permissions(bool allowed);
 		void dumpmem(int length);
 		int stack_head_offset;
 		
 	private:
 		Utils utils;
 		Serial serial;
+		void init();
 		void set_address(int address);
 		void memory_management();
 		int* read_sram();
-		void bus_write(int8_t data);
+		void bus_write(int data);
 		void setctrlpin(int pin,int state);
 		int stack_tail_offset;
+		bool memory_restrictedaccess_allowed;
 };
 #endif
