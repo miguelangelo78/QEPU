@@ -85,6 +85,7 @@
 
 //GENERAL PURPOSE CONSTANTS:
 #define STRING_TERMINATOR '$'
+#define STRING_NEWLINE 0xD
 #define FALSE 0
 #define TRUE 1
 #define INPUT 0x0

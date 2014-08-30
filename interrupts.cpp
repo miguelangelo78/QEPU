@@ -21,12 +21,42 @@ void QEPU::interrupt_cpu(int interrupt_type){
 				}
 				break;
 			case INT_UART_IN_CHAR_NO_ECHO:
+				sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,serial.read());
+				interrupt_done();
 				break;
-			case INT_UART_IN_CHAR_ECHO:
+			case INT_UART_IN_CHAR_ECHO:{
+					int char_echo=serial.read();
+					serial.write(char_echo);
+					sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_echo);
+					interrupt_done();
+				}
 				break;
-			case INT_UART_IN_BUFF_NO_ECHO:
+			case INT_UART_IN_BUFF_NO_ECHO:{
+					int char_noecho=serial.read();
+					if(char_noecho==STRING_NEWLINE){
+						interrupt_done();
+						sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,STRING_TERMINATOR);
+					}else
+						if(char_noecho==0x8 && address_pointer_offset>0) address_pointer_offset--;
+						else{
+							sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_noecho);
+							address_pointer_offset++;
+						}
+				}
 				break;
-			case INT_UART_IN_BUFF_ECHO:
+			case INT_UART_IN_BUFF_ECHO:{
+					int char_echo=serial.read();
+					serial.write(char_echo);
+					if(char_echo==STRING_NEWLINE){
+						interrupt_done();
+						sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,STRING_TERMINATOR);
+					}else 
+						if(char_echo==0x8 && address_pointer_offset>0) address_pointer_offset--;
+						else{
+							sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_echo);
+							address_pointer_offset++;
+						}
+				}
 				break;
 		}
 	}
