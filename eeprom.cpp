@@ -189,13 +189,14 @@ uint8_t EEProm::read(uint16_t address){
 	return data;
 }
 char* EEProm::readall(){
-	char eeprom_mem[MAX_MEM_SIZE];
+	/*char eeprom_mem[MAX_MEM_SIZE];
 	
 	for(int i=0;i<MAX_MEM_SIZE;i++) {
 		eeprom_mem[i]=read(i);
 		if(eeprom_mem[i]==0xFF && eeprom_mem[i-1]==0xFF && eeprom_mem[i-2]==0xFF && eeprom_mem[i-3]==0xFF && eeprom_mem[i-4]==0xFF) break;
 	}
-	return eeprom_mem;
+	return eeprom_mem;*/
+	return "";
 }
 
 int EEProm::count_lines(){

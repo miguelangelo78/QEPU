@@ -6,17 +6,20 @@
 #include <avr/eeprom.h>
 Gates::Gates(){}
 
+/*TO DELETE LATER (BEGIN) */
 Serial s;
-
 void print_states(int qb_count,Complex * vec,char* message){
-	Utils utils;
-	s.writestrln(message);
-	for(int i=0;i<qb_count;i++){
-		s.writestr("R: "); s.writestr(utils.int2str(vec[i].re*1000));
-		s.writestr(" . I: "); s.writestr(utils.int2str(vec[i].im*1000));
-		s.writestrln("");
+	if(DEBUG_MODE){
+		Utils utils;
+		s.writestrln(message);
+		for(int i=0;i<qb_count;i++){
+			s.writestr("R: "); s.writestr(utils.int2str(vec[i].re*1000));
+			s.writestr(" . I: "); s.writestr(utils.int2str(vec[i].im*1000));
+			s.writestrln("");
+		}
 	}
 }
+/*TO DELETE LATER (END) */
 
 int Gates::touch(double probability){
 	return RAND_MAX*probability>=rand();
@@ -67,7 +70,6 @@ Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
 				break;
 			}
 	}
-	//print_states(kron_size,kronvec,"Kronecker: ");
 	return kronvec;
 }
 

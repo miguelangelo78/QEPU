@@ -102,6 +102,7 @@ int QEPU::fetch_register(int address){
 	int address_offset=address*BUS_WIDTH;
 	for(int i=0;i<BUS_WIDTH;i++)
 		sprintf(data_fetched,"%s%d",data_fetched,measure(read(address_offset+i,THE,false)));
+	
 	strrev(data_fetched);
 	return strtol(data_fetched,NULL,2);
 }
@@ -140,7 +141,7 @@ void QEPU::run(){
 	
 	int line_width=INSTR_WIDTH;
 	program_counter_maximum=eeprom.count_lines();
-	for(int program_counter=0;program_counter<program_counter_maximum;program_counter++){
+	for(program_counter=0;program_counter<program_counter_maximum;program_counter++){
 		//FETCH OPERANDS FROM THE EEPROM:
 		int eeprom_line_selection=program_counter*line_width;
 		int func=0;	char op1s[OP1_WIDTH]=""; char op2s[OP2_WIDTH]=""; char op3s[OP3_WIDTH]="";
@@ -153,9 +154,14 @@ void QEPU::run(){
 		//EXECUTE:
 		execute(func,strtol(op1s,NULL,16),strtol(op2s,NULL,16),strtol(op3s,NULL,16)); //INSTRUCTION DECODE AND EXECUTE
 	}
-	dumpmem(QUBIT_COUNT);
+	
+	
+	if(SHOW_LAST_STATE){
+		dumpmem(QUBIT_COUNT);
+		serial.writestrln("");
+		sram.dumpmem(5);
+	}
 	serial.writestrln("");
-	sram.dumpmem(5);
 	serial.writestr("The execution of the program has finished");
 	#pragma endregion
 }
@@ -282,138 +288,198 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 		case 0x1B: /*ADD*/
 			sram.write(op1,sram.read(op2)+sram.read(op3));
 			break;
-		case 0x1C: /*SUB*/
+		case 0x1C: /*ADD RK (add reg const)*/
+			sram.write(op1,sram.read(op2)+op3);
+			break;
+		case 0x1D: /*SUB*/
 			sram.write(op1,sram.read(op2)-sram.read(op3));
 			break;
-		case 0x1D: /*MUL*/
+		case 0x1E: /*SUB RK (sub reg const)*/
+			sram.write(op1,sram.read(op2)-op3);
+			break;
+		case 0x1F: /*SUB KR (sub const reg)*/
+			sram.write(op1,op2-sram.read(op3));
+			break;
+		case 0x20: /*MUL*/
 			sram.write(op1,sram.read(op2)*sram.read(op3));
 			break;
-		case 0x1E: /*DIV*/
+		case 0x21: /*MUL RK (mul reg const)*/
+			sram.write(op1,sram.read(op2)*op3);
+			break;
+		case 0x22: /*DIV*/
 			sram.write(op1,sram.read(op2)/sram.read(op3));
 			break;
-		case 0x1F: /*AND*/
+		case 0x23: /*DIV RK (div reg const)*/
+			sram.write(op1,sram.read(op2)/op3);
+			break;
+		case 0x24: /*DIV KR (div const reg)*/
+			sram.write(op1,op2/sram.read(op3));
+			break;
+		case 0x25: /*AND*/
 			sram.write(op1,sram.read(op2)&sram.read(op3));
 			break;
-		case 0x20: /*OR*/
+		case 0x26: /*AND RK (and reg const)*/
+			sram.write(op1,sram.read(op2)&op3);
+			break;
+		case 0x27: /*AND KR (and const reg)*/
+			sram.write(op1,op2&sram.read(op3));
+			break;
+		case 0x28: /*OR*/
 			sram.write(op1,sram.read(op2)|sram.read(op3));
 			break;
-		case 0x21: /*NOR*/
+		case 0x29: /*OR RK (or reg const)*/
+			sram.write(op1,sram.read(op2)|op3);
+			break;
+		case 0x2A: /*OR KR (or const reg)*/
+			sram.write(op1,op2|sram.read(op3));
+			break;
+		case 0x2B: /*NOR*/
 			sram.write(op1,~(sram.read(op2)|sram.read(op3)));
 			break;
-		case 0x22: /*XOR*/
+		case 0x2C: /*NOR RK (nor reg const)*/
+			sram.write(op1,~(sram.read(op2)|op3));
+			break;
+		case 0x2D: /*NOR KR (nor const reg)*/
+			sram.write(op1,~(op2|sram.read(op3)));
+			break;
+		case 0x2E: /*XOR*/
 			sram.write(op1,sram.read(op2)^sram.read(op3));
 			break;
-		case 0x23: /*NAN*/
+		case 0x2F: /*XOR RK (xor reg const)*/
+			sram.write(op1,sram.read(op2)^op3);
+			break;
+		case 0x30: /*XOR KR (xor const reg)*/
+			sram.write(op1,op2^sram.read(op3));
+			break;
+		case 0x31: /*NAN*/
 			sram.write(op1,~(sram.read(op2)&sram.read(op3)));
 			break;
-		case 0x24: /*NOT*/
+		case 0x32: /*NAN RK (nand reg const)*/
+			sram.write(op1,~(sram.read(op2)&op3));
+			break;
+		case 0x33: /*NAN KR (nand const reg)*/
+			sram.write(op1,~(op2&sram.read(op3)));
+			break;
+		case 0x34: /*NOT*/
 			sram.write(op1,~sram.read(op2));
 			break;
-		case 0x25: /*SHL*/
+		case 0x35: /*SHL*/
+			sram.write(op1,sram.read(op2)<<sram.read(op3));
+			break;
+		case 0x36: /*SHL RK (shl reg const)*/
 			sram.write(op1,sram.read(op2)<<op3);
 			break;
-		case 0x26: /*SHR*/
+		case 0x37: /*SHL KR (shl const reg)*/
+			sram.write(op1,op2<<sram.read(op2));
+			break;
+		case 0x38: /*SHR*/
+			sram.write(op1,sram.read(op2)>>sram.read(op3));
+			break;
+		case 0x39: /*SHR RK (shr reg const)*/
 			sram.write(op1,sram.read(op2)>>op3);
 			break;
-		case 0x27: /*INT (interrupt)*/ //NEEDS TABLE SYSTEM
+		case 0x3A: /*SHR KR (shr const reg)*/
+			sram.write(op1,op2>>sram.read(op2));
+			break;
+		case 0x3B: /*INT (interrupt)*/ //NEEDS TABLE SYSTEM
 			interrupt_cpu(op1);
 			break;
-		case 0x28: /*DLY (delay)*/
+		case 0x3C: /*DLY (delay)*/
 			utils.delay(op1);
 			break;
-		case 0x29: /*NOP (nop) - DOES NOTHING*/ 
+		case 0x3D: /*NOP (nop) - DOES NOTHING*/ 
 			break;
-		case 0x2A: /*HLT (halt)*/ 
+		case 0x3E: /*HLT (halt)*/ 
 			program_counter=program_counter_maximum;
 			break;
 		//QUANTUM FUNCTIONS:
 		//1 QUBIT GATES -
-		case 0x2B: // X GATE
+		case 0x3F: // X GATE
 			newthephi=gates.X(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x2C: // Y GATE
+		case 0x40: // Y GATE
 			newthephi=gates.Y(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x2D: // Z GATE
+		case 0x41: // Z GATE
 			newthephi=gates.Z(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x2E: // H GATE
+		case 0x42: // H GATE
 			newthephi=gates.H(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x2F: // S GATE
+		case 0x43: // S GATE
 			newthephi=gates.S(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x30: // T GATE
+		case 0x44: // T GATE
 			newthephi=gates.T(read(op1,THE,false),read(op1,PHI,false));
 			write(op1,THE,newthephi[0]);write(op1,PHI,newthephi[1]);
 			break;
-		case 0x31: // ROTATE X GATE
+		case 0x45: // ROTATE X GATE
 			newthephi=gates.ROX(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			break;
-		case 0x32: // ROTATE Y GATE
+		case 0x46: // ROTATE Y GATE
 			newthephi=gates.ROY(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			break;
-		case 0x33: // ROTATE Z GATE
+		case 0x47: // ROTATE Z GATE
 			newthephi=gates.ROZ(read(op1,THE,false),read(op1,PHI,false),op2);
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			break;
 		//2 QUBIT GATES -
-		case 0x34: // CNOT GATE
+		case 0x48: // CNOT GATE
 			newthephi=gates.CNO(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x35: // CSIGN GATE
+		case 0x49: // CSIGN GATE
 			newthephi=gates.CSI(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x36: // SWAP GATE
+		case 0x4A: // SWAP GATE
 			newthephi=gates.SWA(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x37: // INCREMENT GATE
+		case 0x4B: // INCREMENT GATE
 			newthephi=gates.INC(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x38: // DECREMENT GATE
+		case 0x4C: // DECREMENT GATE
 			newthephi=gates.DEC(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x39: // SWAGSQ GATE
+		case 0x4D: // SWAGSQ GATE
 			newthephi=gates.SWQ(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
-		case 0x3A: // SWAPI GATE
+		case 0x4E: // SWAPI GATE
 			newthephi=gates.SWI(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			break;
 		//3 QUBIT GATES -
-		case 0x3B: // CONTROL SWAP GATE
+		case 0x4F: // CONTROL SWAP GATE
 			newthephi=gates.CSW(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 			break;
-		case 0x3C: // TOFFOLI GATE
+		case 0x50: // TOFFOLI GATE
 			newthephi=gates.TOF(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
 			write(op3,THE,newthephi[4]); write(op3,PHI,newthephi[5]);
 			break;
-		case 0x3D: // DEUTSCH GATE
+		case 0x51: // DEUTSCH GATE
 			newthephi=gates.DEU(read(op1,THE,false),read(op1,PHI,false),read(op2,THE,false),read(op2,PHI,false),read(op3,THE,false),read(op3,PHI,false),read(0,THE,false));
 			write(op1,THE,newthephi[0]); write(op1,PHI,newthephi[1]);
 			write(op2,THE,newthephi[2]); write(op2,PHI,newthephi[3]);
@@ -423,7 +489,7 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 			break;
 	}
 	
-	if(false){
+	if(DEBUG_MODE){
 		serial.writestr("Function: "); serial.writestr(utils.int2str(func));
 		serial.writestr(" , OP1: ");   serial.writestr(utils.int2str(op1));
 		serial.writestr(" , OP2: ");   serial.writestr(utils.int2str(op2));
