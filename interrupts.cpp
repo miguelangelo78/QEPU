@@ -7,12 +7,12 @@ void QEPU::interrupt_cpu(int interrupt_type){
 	while(!interrupt_signal){
 		switch(interrupt_type){
 			case INT_UART_OUT_CHAR:
-				serial.write(sram.read(fetch_register(INT_RESERVED_ADDRESSPOINTER)));
+				serial.write(sram.read(qmem.fetch_register(INT_RESERVED_ADDRESSPOINTER)));
 				interrupt_done();
 				break;
 			case INT_UART_OUT_BUFFER:
 				{
-					int data_read=sram.read(fetch_register(INT_RESERVED_ADDRESSPOINTER)+address_pointer_offset);
+					int data_read=sram.read(qmem.fetch_register(INT_RESERVED_ADDRESSPOINTER)+address_pointer_offset);
 					if(data_read==STRING_TERMINATOR) interrupt_done();
 					else{
 						serial.write(data_read);
@@ -21,13 +21,13 @@ void QEPU::interrupt_cpu(int interrupt_type){
 				}
 				break;
 			case INT_UART_IN_CHAR_NO_ECHO:
-				sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,serial.read());
+				sram.write(qmem.fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,serial.read());
 				interrupt_done();
 				break;
 			case INT_UART_IN_CHAR_ECHO:{
 					int char_echo=serial.read();
 					serial.write(char_echo);
-					sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_echo);
+					sram.write(qmem.fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_echo);
 					interrupt_done();
 				}
 				break;
@@ -35,11 +35,11 @@ void QEPU::interrupt_cpu(int interrupt_type){
 					int char_noecho=serial.read();
 					if(char_noecho==STRING_NEWLINE){
 						interrupt_done();
-						sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,STRING_TERMINATOR);
+						sram.write(qmem.fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,STRING_TERMINATOR);
 					}else
 						if(char_noecho==0x8 && address_pointer_offset>0) address_pointer_offset--;
 						else{
-							sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_noecho);
+							sram.write(qmem.fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_noecho);
 							address_pointer_offset++;
 						}
 				}
@@ -49,11 +49,11 @@ void QEPU::interrupt_cpu(int interrupt_type){
 					serial.write(char_echo);
 					if(char_echo==STRING_NEWLINE){
 						interrupt_done();
-						sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,STRING_TERMINATOR);
+						sram.write(qmem.fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,STRING_TERMINATOR);
 					}else 
 						if(char_echo==0x8 && address_pointer_offset>0) address_pointer_offset--;
 						else{
-							sram.write(fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_echo);
+							sram.write(qmem.fetch_register(INT_RESERVED_ADDRESSDATASTORE)+address_pointer_offset,char_echo);
 							address_pointer_offset++;
 						}
 				}

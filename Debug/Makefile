@@ -44,6 +44,7 @@ C_SRCS +=  \
 ../jumpstack.cpp \
 ../qepu.cpp \
 ../QEPU_Project_Atmega32.cpp \
+../qmem.cpp \
 ../sram.cpp \
 ../uart.cpp \
 ../utils.cpp
@@ -64,6 +65,7 @@ interrupts.o \
 jumpstack.o \
 qepu.o \
 QEPU_Project_Atmega32.o \
+qmem.o \
 sram.o \
 uart.o \
 utils.o
@@ -77,6 +79,7 @@ interrupts.o \
 jumpstack.o \
 qepu.o \
 QEPU_Project_Atmega32.o \
+qmem.o \
 sram.o \
 uart.o \
 utils.o
@@ -90,6 +93,7 @@ interrupts.d \
 jumpstack.d \
 qepu.d \
 QEPU_Project_Atmega32.d \
+qmem.d \
 sram.d \
 uart.d \
 utils.d
@@ -103,6 +107,7 @@ interrupts.d \
 jumpstack.d \
 qepu.d \
 QEPU_Project_Atmega32.d \
+qmem.d \
 sram.d \
 uart.d \
 utils.d
@@ -118,6 +123,8 @@ OUTPUT_FILE_DEP:= ./makedep.mk
 LIB_DEP+= 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

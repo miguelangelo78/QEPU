@@ -157,6 +157,12 @@
     <Compile Include="QEPU_Project_Atmega32.cpp">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="qmem.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="qmem.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="sram.cpp">
       <SubType>compile</SubType>
     </Compile>

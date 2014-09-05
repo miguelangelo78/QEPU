@@ -18,6 +18,8 @@ qepu.cpp
 
 QEPU_Project_Atmega32.cpp
 
+qmem.cpp
+
 sram.cpp
 
 uart.cpp
