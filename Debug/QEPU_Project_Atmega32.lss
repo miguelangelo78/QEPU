@@ -12286,8 +12286,8 @@ void SRAM::init(){
     5a26:	91 83       	std	Z+1, r25	; 0x01
     5a28:	80 83       	st	Z, r24
 	stack_tail_offset=ADDRESS_MAX-MEMORY_TAIL_PERMISSION_OFFSET-TAIL_PROGRAMMER_OFFSET;
-    5a2a:	88 e3       	ldi	r24, 0x38	; 56
-    5a2c:	90 e0       	ldi	r25, 0x00	; 0
+    5a2a:	80 e0       	ldi	r24, 0x00	; 0
+    5a2c:	91 e0       	ldi	r25, 0x01	; 1
     5a2e:	95 83       	std	Z+5, r25	; 0x05
     5a30:	84 83       	std	Z+4, r24	; 0x04
 	memory_restrictedaccess_allowed=false;
