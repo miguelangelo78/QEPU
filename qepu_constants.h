@@ -97,6 +97,7 @@
 #define LOW 0
 #define M_PI 3.14159265358979323846
 #define F_CPU 14745600
+#define MAX_THEORETICAL_PC 1000000
 #define DEBUG_MODE false
 #define SHOW_LAST_STATE false
 
