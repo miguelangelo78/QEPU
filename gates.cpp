@@ -70,11 +70,19 @@ Complex * Gates::kronecker(Complex * vec,int qb_count,int touch_enable){
 				break;
 			}
 	}
+	free(vec);
 	return kronvec;
 }
 
 Complex * Gates::ampl2vec(int qb_count,int theta_list[6],int phi_list[6]){
 	Complex* vec=(Complex*)malloc(sizeof(Complex)*(qb_count*2));
+	if(vec==NULL){
+		Serial s;
+		Utils u;
+		s.writestr("ERROR");
+		while(1);
+	}
+	
 	int thephi_index=0;
 	for(int i=0;i<qb_count*2;i+=2){
 		vec[i].re=cos(theta_list[thephi_index]*M_PI/360);												// ALPHA RE (IM=0)
@@ -93,6 +101,7 @@ int * Gates::vec2ampl(Complex * vec,int qb_count){
 	for(int i=0;i<qb_count*2;i++) if(i%2==0) newthephi[i]=(360*acos(vec[i].re))/M_PI; else newthephi[i]=(180*vec[i].arg())/M_PI;
 	
 	print_states(kron_size,vec,"After: ");
+	free(vec);
 	return newthephi;
 }
 
@@ -105,6 +114,7 @@ Complex * Gates::multiply2x2(Complex *q,Complex matrix[2][2]){
 		result[i].re=tmp.re;
 		result[i].im=tmp.im;
 	}
+	free(q);
 	return result;
 }
 Complex * Gates::multiply4x4(Complex *q,Complex matrix[4][4]){

@@ -91,7 +91,7 @@ int QMEM::fetch_register(int address){
 	char data_fetched[BUS_WIDTH+1]="";
 	int address_offset=address*BUS_WIDTH;
 	for(int i=0;i<BUS_WIDTH;i++)
-	sprintf(data_fetched,"%s%d",data_fetched,measure(read(address_offset+i,THE,false)));
+		sprintf(data_fetched,"%s%d",data_fetched,measure(read(address_offset+i,THE,false)));
 	
 	strrev(data_fetched);
 	return strtol(data_fetched,NULL,2);
@@ -103,8 +103,8 @@ void QMEM::set_register(int address,int data){
 	int address_offset=address*BUS_WIDTH;
 	
 	for(int i=0;i<BUS_WIDTH;i++)
-	if(data_str[i]=='1') write(address_offset+i,THE,180);
-	else write(address_offset+i,THE,0);
+		if(data_str[i]=='1') write(address_offset+i,THE,180);
+		else write(address_offset+i,THE,0);
 }
 
 void QMEM::dumpmem(int length){

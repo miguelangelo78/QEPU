@@ -44,7 +44,6 @@ void QEPU::run(){
 }
 
 void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
-	int * newthephi=(int*)malloc(sizeof(int)*MAX_NEWTHEPHI);
 	//TODO: MAKE A SWITCH ON THE FUNCTION
 	switch(func){
 		//DATA MOVEMENT AND PROGRAM CONTROL/FLUX/IO FUNCTIONS:
@@ -272,96 +271,153 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 		//QUANTUM FUNCTIONS:
 		//1 QUBIT GATES -
 		case 0x3F: // X GATE
-			newthephi=gates.X(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
+		{
+			int * newthephi=gates.X(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
 			qmem.write(op1,THE,newthephi[0]);qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x40: // Y GATE
-			newthephi=gates.Y(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
+		{
+			int * newthephi=gates.Y(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
 			qmem.write(op1,THE,newthephi[0]);qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x41: // Z GATE
-			newthephi=gates.Z(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
+		{
+			int * newthephi=gates.Z(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
 			qmem.write(op1,THE,newthephi[0]);qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x42: // H GATE
-			newthephi=gates.H(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
+		{
+			int * newthephi=gates.H(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
 			qmem.write(op1,THE,newthephi[0]);qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x43: // S GATE
-			newthephi=gates.S(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
+		{
+			int * newthephi=gates.S(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
 			qmem.write(op1,THE,newthephi[0]);qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x44: // T GATE
-			newthephi=gates.T(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
+		{
+			int * newthephi=gates.T(qmem.read(op1,THE,false),qmem.read(op1,PHI,false));
 			qmem.write(op1,THE,newthephi[0]);qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x45: // ROTATE X GATE
-			newthephi=gates.ROX(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),op2);
+		{
+			int * newthephi=gates.ROX(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),op2);
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x46: // ROTATE Y GATE
-			newthephi=gates.ROY(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),op2);
+		{
+			int * newthephi=gates.ROY(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),op2);
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x47: // ROTATE Z GATE
-			newthephi=gates.ROZ(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),op2);
+		{
+			int * newthephi=gates.ROZ(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),op2);
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
-			break;
+			free(newthephi);
+		}
+		break;
 		//2 QUBIT GATES -
 		case 0x48: // CNOT GATE
-			newthephi=gates.CNO(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
+		{
+			int * newthephi=gates.CNO(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x49: // CSIGN GATE
-			newthephi=gates.CSI(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
+		{
+			int * newthephi=gates.CSI(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x4A: // SWAP GATE
-			newthephi=gates.SWA(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
+		{
+			int * newthephi=gates.SWA(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x4B: // INCREMENT GATE
-			newthephi=gates.INC(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
+		{
+			int * newthephi=gates.INC(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x4C: // DECREMENT GATE
-			newthephi=gates.DEC(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
+		{
+			int * newthephi=gates.DEC(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x4D: // SWAGSQ GATE
-			newthephi=gates.SWQ(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
+		{
+			int * newthephi=gates.SWQ(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x4E: // SWAPI GATE
-			newthephi=gates.SWI(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
+		{
+			int * newthephi=gates.SWI(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
-			break;
+			free(newthephi);
+		}
+		break;
 		//3 QUBIT GATES -
 		case 0x4F: // CONTROL SWAP GATE
-			newthephi=gates.CSW(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false),qmem.read(op3,THE,false),qmem.read(op3,PHI,false));
+		{
+			int * newthephi=gates.CSW(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false),qmem.read(op3,THE,false),qmem.read(op3,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
 			qmem.write(op3,THE,newthephi[4]); qmem.write(op3,PHI,newthephi[5]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x50: // TOFFOLI GATE
-			newthephi=gates.TOF(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false),qmem.read(op3,THE,false),qmem.read(op3,PHI,false));
+		{
+			int * newthephi=gates.TOF(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false),qmem.read(op3,THE,false),qmem.read(op3,PHI,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
 			qmem.write(op3,THE,newthephi[4]); qmem.write(op3,PHI,newthephi[5]);
-			break;
+			free(newthephi);
+		}
+		break;
 		case 0x51: // DEUTSCH GATE
-			newthephi=gates.DEU(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false),qmem.read(op3,THE,false),qmem.read(op3,PHI,false),qmem.read(0,THE,false));
+		{
+			int * newthephi=gates.DEU(qmem.read(op1,THE,false),qmem.read(op1,PHI,false),qmem.read(op2,THE,false),qmem.read(op2,PHI,false),qmem.read(op3,THE,false),qmem.read(op3,PHI,false),qmem.read(0,THE,false));
 			qmem.write(op1,THE,newthephi[0]); qmem.write(op1,PHI,newthephi[1]);
 			qmem.write(op2,THE,newthephi[2]); qmem.write(op2,PHI,newthephi[3]);
 			qmem.write(op3,THE,newthephi[4]); qmem.write(op3,PHI,newthephi[5]);
-			break;
+			free(newthephi);
+		}
+		break;
 		default: /*THIS FUNCTION DOES NOT EXIST*/
 			break;
 	}
@@ -373,5 +429,4 @@ void QEPU::execute(int func,int32_t op1,int32_t op2,int32_t op3){
 		serial.writestr(" PC: ");	   serial.writestrln(utils.int2str(program_counter));
 		serial.writestrln("");
 	}
-	free(newthephi);	
 }
